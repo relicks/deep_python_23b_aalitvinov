@@ -20,7 +20,7 @@ def grepiter(iterable: Iterable[str], wordfilter: list[str]) -> Iterator[str]:
 
 
 def grepfile(
-    file: str | PathLike[str] | TextFile, wordfilter: list[str], encoding="utf-8"
+    file: str | PathLike[str] | TextFile, wordfilter: list[str], encoding: str = "utf-8"
 ) -> Iterator[str]:
     """Итеративно ищет список слов в каждой строке `file`'а.
 
