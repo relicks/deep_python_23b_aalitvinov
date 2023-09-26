@@ -8,9 +8,9 @@
 
 | File | Covered Lines | Num Statements | Percent Covered | Missing Lines | Excluded Lines |
 | ---- | ------------- | -------------- | --------------- | ------------- | -------------- |
-| src\lesson_01\__init__.py | 0 | 0 | 100 | 0 | 0 |
-| src\lesson_01\predict_message_mood.py | 9 | 9 | 100 | 0 | 6 |
-| src\lesson_01\read_generator.py | 18 | 18 | 100 | 0 | 0 |
+| `src\lesson_01\__init__.py` | 0 | 0 | 100 | 0 | 0 |
+| `src\lesson_01\predict_message_mood.py` | 9 | 9 | 100 | 0 | 6 |
+| `src\lesson_01\read_generator.py` | 18 | 18 | 100 | 0 | 0 |
 | **Total** | **27** | **27** | **100** | **0** | **6** |
 
 ## Testing
