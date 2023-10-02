@@ -41,6 +41,9 @@
 				"python.autoComplete.extraPaths": [
 					"/usr/local/py-utils/bin/"
 				],
+				"python.analysis.extraPaths": [
+					"/usr/local/py-utils/bin/pytest"
+				],
 				"python.defaultInterpreterPath": "/usr/local/bin/python",
 				"python.testing.pytestArgs": [
 					"tests"
