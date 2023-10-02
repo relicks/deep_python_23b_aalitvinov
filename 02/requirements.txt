@@ -1,0 +1,13 @@
+# lib deps:
+orjson
+
+# dev deps:
+pytest
+pytest-mock
+pytest-cov
+flake8
+pylint
+black[jupyter]
+mypy
+ipykernel
+factory_boy

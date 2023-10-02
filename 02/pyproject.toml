@@ -1,0 +1,39 @@
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pylint.format]
+max-line-length = "88"
+
+[tool.ruff]
+src = ["src", "tests"]
+line-length = 88
+target-version = "py311"
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+select = [
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "UP", # pyupgrade
+    # "D",   # pydocstyle
+    "I",   # isort
+    "PL",  # pylint
+    "RUF", # ruff-specific
+    "N",   # pep8-naming
+    "C4",  # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "PT",  # flake8-pytest-style
+]
+ignore = [
+    "RUF001", # ambiguous cyrillic letters
+    "RUF002", # ambiguous cyrillic letters
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]
+markers = [
+    "return_value(Any): used to pass return values to mock.patch in fixtures.",
+]
