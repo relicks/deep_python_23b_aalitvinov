@@ -1,16 +1,13 @@
 """Содержит решение для первого пункта домашнего задание #02."""
 
 
-import logging
 import statistics
+import sys
 from collections import deque
 from collections.abc import Callable
 from functools import wraps
 from time import perf_counter_ns
 from typing import ParamSpec, TypeVar
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -25,16 +22,13 @@ def mean(n_last: int):
             begin = perf_counter_ns()
             result = func(*args, **kwargs)
             time_elapsed_ns = perf_counter_ns() - begin
-            
+
             timings.append(time_elapsed_ns)
-            logger.info(
+            print(
                 f"The last {len(timings)} calls of {func.__name__} took "
-                f"{statistics.mean(timings) / 1e6:.2f} ms on average."
+                f"{statistics.mean(timings) / 1e6:.2f} ms on average.",
+                file=sys.stderr,
             )
-            wrapper.timings: dict[str, float] = {  # type: ignore
-                "n_calls": len(timings),
-                "mean_time_ms": statistics.mean(timings) / 1e6,
-            }
             return result
 
         return wrapper
