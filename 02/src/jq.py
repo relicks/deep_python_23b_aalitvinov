@@ -12,6 +12,7 @@ def parse_json(
     keyword_callback: Callable[[str, str], Any] | None = None,
 ) -> None:
     if keyword_callback is not None:
+        # pylint: disable-next=no-member
         jdic: dict[str, str] = orjson.loads(json_str)
 
         if required_fields is None:
