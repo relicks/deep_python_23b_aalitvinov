@@ -25,11 +25,16 @@ def mean(n_last: int):
             begin = perf_counter_ns()
             result = func(*args, **kwargs)
             time_elapsed_ns = perf_counter_ns() - begin
+            
             timings.append(time_elapsed_ns)
             logger.info(
                 f"The last {len(timings)} calls of {func.__name__} took "
                 f"{statistics.mean(timings) / 1e6:.2f} ms on average."
             )
+            wrapper.timings: dict[str, float] = {  # type: ignore
+                "n_calls": len(timings),
+                "mean_time_ms": statistics.mean(timings) / 1e6,
+            }
             return result
 
         return wrapper

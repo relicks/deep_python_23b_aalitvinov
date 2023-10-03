@@ -1,5 +1,0 @@
-{
-    "python.analysis.extraPaths": [
-        "/usr/local/py-utils/bin/pytest"
-    ]
-}

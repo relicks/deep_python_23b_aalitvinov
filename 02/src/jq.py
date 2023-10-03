@@ -9,17 +9,19 @@ def parse_json(
     json_str: str,
     required_fields: list[str] | None = None,
     keywords: list[str] | None = None,
-    keyword_callback: Callable[[str], Any] | None = None,
+    keyword_callback: Callable[[str, str], Any] | None = None,
 ) -> None:
-    jdic: dict[str, str] = orjson.loads(json_str)
+    if keyword_callback is not None:
+        jdic: dict[str, str] = orjson.loads(json_str)
 
-    if required_fields is None:
-        required_fields = list(jdic.keys())
+        if required_fields is None:
+            required_fields = list(jdic.keys())
 
-    for k in required_fields:
-        words = jdic[k].split()
-        if keyword_callback is not None:
-            if keywords is None:
-                [keyword_callback(word) for word in words]
-            else:
-                [keyword_callback(word) for word in words if word in keywords]
+        if keywords is not None:
+            keywords = [kword.lower() for kword in keywords]
+
+        for key in required_fields:  # iterating over json_dict keys
+            words = jdic[key].split()
+            for word in words:
+                if (keywords is None) or (word.lower() in keywords):
+                    keyword_callback(key, word)
