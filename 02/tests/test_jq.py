@@ -1,5 +1,6 @@
 # pylint: disable=import-error
 from json import JSONDecodeError
+from typing import Any
 
 import pytest
 from pytest_mock import MockerFixture
@@ -80,15 +81,16 @@ def test_alpha_invalid_key(json_str_alpha: str, mocker: MockerFixture):
     assert er.match(invalid_key)
 
 
-def test_beta_not_called(json_str_beta: str, mocker: MockerFixture):
+@pytest.mark.parametrize("kw_list", [[], list(".!@i2ь")])
+def test_beta_not_called(json_str_beta: str, mocker: MockerFixture, kw_list: list[Any]):
     callback = mocker.stub()
     parse_json(
         json_str=json_str_beta,
         required_fields=None,
-        keywords=list(".!@i2ь"),
+        keywords=kw_list,
         keyword_callback=callback,
     )
-    assert not callback.called
+    callback.assert_not_called()
 
 
 def test_beta_one(json_str_beta: str, mocker: MockerFixture):
@@ -138,7 +140,6 @@ def test_all_call(mocker: MockerFixture):
     assert callback.call_count == expected_num_calls
 
 
-@pytest.mark.skip()
 def test_giant_json(json_str_giant: str, mocker: MockerFixture):
     callback = mocker.stub()
     parse_json(json_str=json_str_giant, keyword_callback=callback)
