@@ -18,6 +18,9 @@
 		},
 		"ghcr.io/devcontainers-contrib/features/invoke:1": {
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers-contrib/features/poetry:2": {
+			"version": "latest"
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
