@@ -1,4 +1,6 @@
 # pylint: disable=import-error
+from json import JSONDecodeError
+
 import pytest
 from pytest_mock import MockerFixture
 
@@ -87,6 +89,53 @@ def test_beta_not_called(json_str_beta: str, mocker: MockerFixture):
         keyword_callback=callback,
     )
     assert not callback.called
+
+
+def test_beta_one(json_str_beta: str, mocker: MockerFixture):
+    callback = mocker.stub()
+    parse_json(
+        json_str=json_str_beta,
+        required_fields=["Головной!"],
+        keywords=["палкА"],
+        keyword_callback=callback,
+    )
+    callback.assert_called_once_with("Головной!", "палка")
+
+
+def test_beta_many(json_str_beta: str, mocker: MockerFixture):
+    callback = mocker.stub()
+    parse_json(
+        json_str=json_str_beta,
+        required_fields=None,
+        keywords=["палка"],
+        keyword_callback=callback,
+    )
+    assert callback.call_args_list == [
+        mocker.call("Головной!", "палка"),
+        mocker.call("34876командование", "Палка"),
+        mocker.call("Палка", "ПАЛКА"),
+        mocker.call("Палка", "палка"),
+        mocker.call("Палка", "ПаЛка"),
+    ]
+
+
+def test_parse_error(mocker: MockerFixture):
+    callback = mocker.stub()
+    with pytest.raises(JSONDecodeError):
+        parse_json("+=12qwsasd,12 asgeht", keyword_callback=callback)
+
+
+def test_all_call(mocker: MockerFixture):
+    expected_num_calls = 6
+
+    callback = mocker.stub()
+    parse_json(
+        json_str='{"Anything":"fund and apt","role":"Process","Evidence":"buy Sign"}',
+        required_fields=None,
+        keywords=None,
+        keyword_callback=callback,
+    )
+    assert callback.call_count == expected_num_calls
 
 
 @pytest.mark.skip()
