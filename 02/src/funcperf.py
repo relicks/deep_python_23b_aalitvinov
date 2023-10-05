@@ -26,7 +26,7 @@ def mean(n_last: int):
             timings.append(time_elapsed_ns)
             print(
                 f"The last {len(timings)} calls of {func.__name__} took "
-                f"{statistics.mean(timings) / 1e6:.2f} ms on average.",
+                f"`{statistics.mean(timings) / 1e6:.2f}` ms on average.",
                 file=sys.stderr,
             )
             return result

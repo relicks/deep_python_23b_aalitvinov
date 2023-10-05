@@ -28,10 +28,10 @@ def parse_json(
             required_fields = list(jdic.keys())
 
         if keywords is not None:
-            keywords = [kword.lower() for kword in keywords]
+            keywords = [kword.casefold() for kword in keywords]
 
         for key in required_fields:  # iterating over json_dict keys
             words = jdic[key].split()
             for word in words:
-                if (keywords is None) or (word.lower() in keywords):
+                if (keywords is None) or (word.casefold() in keywords):
                     keyword_callback(key, word)
