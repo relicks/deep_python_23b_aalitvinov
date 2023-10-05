@@ -14,6 +14,11 @@ R = TypeVar("R")
 
 
 def mean(n_last: int):
+    """Calculates the average time of `n_last` calls to `func` and prints it to stdout.
+
+    :n_last: how many last calls to include in average time calculation.
+    """
+
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         timings = deque(maxlen=n_last)
 

@@ -11,9 +11,11 @@ def parse_json(
     keywords: list[str] | None = None,
     keyword_callback: Callable[[str, str], Any] | None = None,
 ) -> None:
-    """Calls `keyword_callback` on every found match in parsed JSON `str`.
+    """Takes `json_str` and parses it, calling `keyword_callback` on every found match.
 
+    If `keyword_callback` is None, the function returns immediately.
     If `required_fields` is `None`, then looks for `keywords` in every row.
+    If `keywords` is `None`, then calls `keyword_callback` on every word in matched row.
 
     :json_str: a JSON string to be parsed to Python dict
     :required_fields: keys of JSON dict to be searched for match in
