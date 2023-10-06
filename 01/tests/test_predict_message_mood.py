@@ -3,7 +3,7 @@ from typing import NewType
 import pytest
 from pytest_mock import MockerFixture
 
-from lesson_01.predict_message_mood import SomeModel, predict_message_mood
+from src.predict_message_mood import SomeModel, predict_message_mood
 
 MockedSomeModel = NewType("MockedSomeModel", SomeModel)
 

@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from pytest_mock import MockerFixture
 
-from lesson_01.read_generator import grepfile, grepiter
+from src.read_generator import grepfile, grepiter
 
 
 @pytest.fixture(scope="module")

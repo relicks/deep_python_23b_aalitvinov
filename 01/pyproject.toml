@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Alexander Litvinov <axndr.litvinov@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "lesson_01", from = "src" }]
+packages = [{ include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -51,7 +51,12 @@ ignore = [
     "RUF002", # ambiguous cyrillic letters
 ]
 
+[tool.ruff.isort]
+known-first-party = ["src"]
+
 [tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]
 markers = [
     "return_value(Any): used to pass return values to mock.patch in fixtures.",
 ]
