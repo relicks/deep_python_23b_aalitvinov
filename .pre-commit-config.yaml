@@ -30,6 +30,7 @@ repos:
         entry: pylint
         language: system
         types: [python]
+        exclude: ^02/tasks.py
         args: [
             "-rn", # Only display messages
             "-sn", # Don't display the score

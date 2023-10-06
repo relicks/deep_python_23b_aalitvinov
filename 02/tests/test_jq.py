@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 from pytest_mock import MockerFixture
 
-from jq import parse_json
+from src.jq import parse_json
 
 
 def test_example_print(capsys: pytest.CaptureFixture):
@@ -27,6 +27,16 @@ def test_example_mock(mocker: MockerFixture):
         keyword_callback=callback,
     )
     callback.assert_called_once_with("key1", "word2")  # ! assert
+
+
+def test_noop(mocker: MockerFixture):
+    mock = mocker.stub()
+    mocker.patch("orjson.loads", mock)
+    parse_json(
+        json_str='{"key1": "Word1 word2", "key2": "word2 word3"}',
+        keyword_callback=None,
+    )
+    mock.assert_not_called()
 
 
 def test_alpha_one(json_str_alpha: str, mocker: MockerFixture):

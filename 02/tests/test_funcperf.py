@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from funcperf import mean
+from src.funcperf import mean
 
 
 def sleeper(ms: int) -> None:

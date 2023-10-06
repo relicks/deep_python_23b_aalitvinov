@@ -13,14 +13,14 @@ P = ParamSpec("P")
 R = TypeVar("R")
 
 
-def mean(n_last: int):
+def mean(n_last: int) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Calculates the average time of `n_last` calls to `func` and prints it to stdout.
 
     :n_last: how many last calls to include in average time calculation.
     """
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
-        timings = deque(maxlen=n_last)
+        timings: deque[int] = deque(maxlen=n_last)
 
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
