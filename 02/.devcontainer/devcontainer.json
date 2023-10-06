@@ -1,14 +1,8 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "deep_pythoh_HW2 3.11",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"name": "deep_python_HW2 3.11",
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
-	// "build": {
-	// 	// Path is relative to the devcontainer.json file.
-	// 	"context": "..",
-	// 	"dockerfile": "Dockerfile"
-	// },
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/pipx-package:1": {
 			"package": "black",
@@ -27,33 +21,20 @@
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": {
-		"install_requirements": [
-			"/usr/local/bin/python",
-			"-m",
-			"pip",
-			"install",
-			"-r",
-			"requirements.txt"
-		]
+		"config_poetry": ["poetry config virtualenvs.in-project true"]
 	},
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"settings": {
 				"jupyter.notebookFileRoot": "${workspaceFolder}",
-				"python.autoComplete.extraPaths": [
-					"/usr/local/py-utils/bin/"
-				],
-				"python.analysis.extraPaths": [
-					"/usr/local/py-utils/bin/pytest"
-				],
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.defaultInterpreterPath": ".venv/bin/python",
 				"python.testing.pytestArgs": [
 					"tests"
 				],
 				"python.testing.unittestEnabled": false,
 				"python.testing.pytestEnabled": true,
-				"python.testing.pytestPath": "/usr/local/py-utils/bin/pytest"
+				"python.testing.pytestPath": ".venv/bin/pytest"
 			},
 			"extensions": [
 				"ms-python.python",
