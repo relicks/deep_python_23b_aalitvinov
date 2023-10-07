@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deep_python_hw_lesson_01"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Alexander Litvinov <axndr.litvinov@gmail.com>"]
 readme = "README.md"

@@ -6,12 +6,15 @@
 
 ### Coverage report
 
-| File | Covered Lines | Num Statements | Percent Covered | Missing Lines | Excluded Lines |
-| ---- | :-------------: | :--------------: | :---------------: | :-------------: | :--------------: |
-| `src\lesson_01\__init__.py` | 0 | 0 | 100 | 0 | 0 |
-| `src\lesson_01\predict_message_mood.py` | 9 | 9 | 100 | 0 | 6 |
-| `src\lesson_01\read_generator.py` | 18 | 18 | 100 | 0 | 0 |
-| **Total** | **27** | **27** | **100** | **0** | **6** |
+```text
+Name                          Stmts   Miss Branch BrPart  Cover
+---------------------------------------------------------------
+src/__init__.py                   0      0      0      0   100%
+src/predict_message_mood.py      10      0      4      0   100%
+src/read_generator.py            18      0     10      0   100%
+---------------------------------------------------------------
+TOTAL                            28      0     14      0   100%
+```
 
 ## Testing
 
@@ -25,7 +28,7 @@ Then follow these instructions:
 1. clone this repository:
 
    ```bash
-   git clone --depth 1 https://github.com/relicks/deep_python_23b_aalitvinov.git
+   git clone https://github.com/relicks/deep_python_23b_aalitvinov.git
    ```
 
 1. _cd_ into this dir:
@@ -34,7 +37,7 @@ Then follow these instructions:
    cd deep_python_23b_aalitvinov/01
    ```
 
-   and run all commands from it.
+   and run all commands from this working directory.
 
 1. [Download and install Poetry](https://python-poetry.org/docs/#installation) following the instructions for your OS.
 1. Set up the virtual environment, don't forget to specify the path to python3.11:
@@ -56,9 +59,9 @@ Then follow these instructions:
    pre-commit install
    ```
 
-1. run tests and mypy:
+1. run tests and linters:
 
    ```bash
-   pytest -q --cov=src .\tests\
-   mypy --strict src
+   inv test --cov
+   inv lint --pylint
    ```
