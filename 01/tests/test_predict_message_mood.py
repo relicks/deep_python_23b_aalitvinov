@@ -12,18 +12,11 @@ GOOD_THRESHOLD = 0.8
 
 
 @pytest.fixture()
-def mocked_model(
-    mocker: MockerFixture, request: pytest.FixtureRequest
-) -> MockedSomeModel:
-    return_value: float = request.keywords["return_value"].args[0]
-
-    model = SomeModel()
-    mocker.patch.object(model, "predict", return_value=return_value)
-    return MockedSomeModel(model)
+def model() -> SomeModel:
+    return SomeModel()
 
 
-def test_call_predict(mocker: MockerFixture):
-    model = SomeModel()
+def test_call_predict(model: SomeModel, mocker: MockerFixture):
     spy = mocker.spy(model, "predict")
 
     message = "lIpSuM\n!щыщ"
@@ -31,28 +24,59 @@ def test_call_predict(mocker: MockerFixture):
     spy.assert_called_once_with(message)
 
     predict_message_mood(42, model)  # type: ignore
-    assert spy.call_args_list == [(message,), (42,)]
+    assert spy.call_args_list == [
+        mocker.call(
+            message,
+        ),
+        mocker.call(
+            42,
+        ),
+    ]
 
 
-@pytest.mark.return_value(0.1)
-def test_low(mocked_model: MockedSomeModel):
-    assert (
-        predict_message_mood("lIpSuM", mocked_model, BAD_THRESHOLD, GOOD_THRESHOLD)
-        == "неуд"
-    )
+@pytest.mark.parametrize(
+    argnames=("predict_returns", "out"),
+    argvalues=[
+        (BAD_THRESHOLD - 0.1, "неуд"),
+        ((GOOD_THRESHOLD + BAD_THRESHOLD) / 2, "норм"),
+        (GOOD_THRESHOLD + 0.1, "отл"),
+    ],
+    ids=("low", "mid", "high"),
+)
+def test_normal_returns(
+    model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
+):
+    """Проверяются нормальные случаи порогов для `predict`a."""
+    mock = mocker.Mock(return_value=predict_returns)
+    model = SomeModel()
+    mocker.patch.object(model, "predict", mock)
+    assert predict_message_mood("lIpSuM", model, BAD_THRESHOLD, GOOD_THRESHOLD) == out
 
 
-@pytest.mark.return_value(0.5)
-def test_mid(mocked_model: MockedSomeModel):
-    assert (
-        predict_message_mood("lIpSuM", mocked_model, BAD_THRESHOLD, GOOD_THRESHOLD)
-        == "норм"
-    )
-
-
-@pytest.mark.return_value(0.9)
-def test_high(mocked_model: MockedSomeModel):
-    assert (
-        predict_message_mood("lIpSuM", mocked_model, BAD_THRESHOLD, GOOD_THRESHOLD)
-        == "отл"
-    )
+@pytest.mark.parametrize(
+    argnames=("predict_returns", "out"),
+    argvalues=(
+        (BAD_THRESHOLD, "неуд"),
+        (BAD_THRESHOLD - 1e-16, "неуд"),
+        (BAD_THRESHOLD + 1e-16, "неуд"),
+        (GOOD_THRESHOLD, "отл"),
+        (GOOD_THRESHOLD - 1e-16, "отл"),
+        (GOOD_THRESHOLD + 1e-16, "отл"),
+    ),
+    ids=(
+        "bad_th_eq",
+        "bad_th_less",
+        "bad_th_greater",
+        "good_th_eq",
+        "good_th_less",
+        "good_th_greater",
+    ),
+)
+def test_borders(
+    model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
+):
+    """Проверяются краевые и околокраевые случаи порогов для `predict`a."""
+    mock = mocker.Mock(return_value=predict_returns)
+    model = SomeModel()
+    mocker.patch.object(model, "predict", mock)
+    assert predict_message_mood("lIpSuM", model, BAD_THRESHOLD, GOOD_THRESHOLD) == out

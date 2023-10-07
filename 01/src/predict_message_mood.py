@@ -1,5 +1,6 @@
 """Содержит решение к ДЗ#01.1."""
 import random
+from math import isclose
 from typing import Literal
 
 
@@ -27,8 +28,8 @@ def predict_message_mood(
     - `"норм"` в остальных случаях
     """
     verdict = model.predict(message)
-    if verdict < bad_thresholds:
+    if verdict < bad_thresholds or isclose(verdict, bad_thresholds):
         return "неуд"
-    if verdict > good_thresholds:
+    if verdict > good_thresholds or isclose(verdict, good_thresholds):
         return "отл"
     return "норм"
