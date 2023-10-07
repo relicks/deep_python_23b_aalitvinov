@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Alexander Litvinov <axndr.litvinov@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "src"}]
+packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -18,6 +18,10 @@ mypy = "^1.5.1"
 pylint = "^2.17.5"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+ruff = "^0.0.292"
+black = "^23.9.1"
 
 [tool.black]
 line-length = 88
@@ -58,9 +62,7 @@ known-first-party = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
-markers = [
-    "return_value(Any): used to pass return values to mock.patch in fixtures.",
-]
+
 
 [build-system]
 requires = ["poetry-core"]

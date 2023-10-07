@@ -18,8 +18,10 @@ def get_python_bin_path() -> str | None:
 
 
 @task
-def clean(c: Context):
-    paths = [".venv", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".coverage"]
+def clean(c: Context, venv=False):
+    paths = [".pytest_cache", ".mypy_cache", ".ruff_cache", ".coverage"]
+    if venv:
+        paths.append(".venv")
     paths = (Path(p).resolve() for p in paths)
     for path in paths:
         try:
@@ -29,15 +31,7 @@ def clean(c: Context):
             os.remove(path)
             print(f"Removed file: \t{path!s}")
         except FileNotFoundError:
-            print(f"Directory not found: \t{path!s}")
-
-
-@task
-def get_os(c: Context):
-    bin_path = c.python_bin_path
-    if bin_path is not None:
-        print(Path(bin_path).resolve())
-        assert Path(bin_path).exists()
+            print(f"Path not found: \t{path!s}")
 
 
 @task(iterable=["lint_paths"])
@@ -45,19 +39,19 @@ def lint(
     c: Context,
     pylint: bool = False,
     mypy: bool = True,
-    lint_paths: list[str] | None = None,
+    paths: list[str] | None = None,
 ):
-    if not lint_paths:
+    if not paths:
         to_lint: str = " ".join(["tests", "src"])
     else:
-        to_lint: str = " ".join(lint_paths)
+        to_lint: str = " ".join(paths)
 
     c.run(f"{c.python_bin_path}black {to_lint}", echo=True)
     c.run(f"{c.python_bin_path}isort {to_lint}", echo=True)
     c.run(f"{c.python_bin_path}flake8 {to_lint}", echo=True)
     c.run(f"{c.python_bin_path}ruff {to_lint}", echo=True)
     if pylint:
-        c.run(f"{c.python_bin_path}pylint {lint_paths}", echo=True)
+        c.run(f"{c.python_bin_path}pylint {paths}", echo=True)
     if mypy:
         c.run(f"{c.python_bin_path}mypy -p src -p tests", echo=True)
 
@@ -65,15 +59,14 @@ def lint(
 @task
 def test(c: Context, cov=False):
     if cov:
-        c.run(f"{c.python_bin_path}pytest -q --cov-branch --cov=src")
+        c.run(f"{c.python_bin_path}pytest -q --cov-branch --cov=src", pty=True)
     else:
-        c.run(f"{c.python_bin_path}pytest")
+        c.run(f"{c.python_bin_path}pytest", pty=True)
 
 
-@task
-def getinp(c: Context, inp=None):
-    print(inp)
-
-
-namespace = Collection(clean, lint, test, get_os, getinp)
+namespace = Collection(
+    clean,
+    lint,
+    test,
+)
 namespace.configure({"python_bin_path": get_python_bin_path()})
