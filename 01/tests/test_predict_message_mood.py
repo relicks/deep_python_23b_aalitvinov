@@ -80,3 +80,24 @@ def test_borders(
     model = SomeModel()
     mocker.patch.object(model, "predict", mock)
     assert predict_message_mood("lIpSuM", model, BAD_THRESHOLD, GOOD_THRESHOLD) == out
+
+
+@pytest.mark.parametrize(
+    argnames=("predict_returns", "out"),
+    argvalues=[
+        (0.45, "неуд"),
+        (0.85, "норм"),
+        (0.98, "отл"),
+    ],
+    ids=("low", "mid", "high"),
+)
+def test_threshold_tweaks(
+    model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
+):
+    new_bad_threshold = 0.5
+    new_good_threshold = 0.95
+    mocker.patch.object(model, "predict", return_value=predict_returns)
+    assert (
+        predict_message_mood("lIpSuM", model, new_bad_threshold, new_good_threshold)
+        == out
+    )
