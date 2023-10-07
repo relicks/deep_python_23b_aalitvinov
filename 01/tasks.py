@@ -51,9 +51,11 @@ def lint(
     c.run(f"{c.python_bin_path}flake8 {to_lint}", echo=True)
     c.run(f"{c.python_bin_path}ruff {to_lint}", echo=True)
     if pylint:
-        c.run(f"{c.python_bin_path}pylint {paths}", echo=True)
+        c.run(f"{c.python_bin_path}pylint {to_lint}", echo=True)
     if mypy:
-        c.run(f"{c.python_bin_path}mypy -p src -p tests", echo=True)
+        c.run(
+            f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs", echo=True
+        )
 
 
 @task

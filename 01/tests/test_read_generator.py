@@ -1,3 +1,7 @@
+"""Содержит тесты решения ДЗ#01.2."""
+# pylint: disable=redefined-outer-name
+# pylint: disable=missing-function-docstring,missing-class-docstring
+
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -17,8 +21,7 @@ def file_path(datafiles_path: Path) -> Path:
     data_path = datafiles_path.joinpath("calabaria.txt")
     if data_path.exists():
         return data_path
-    else:
-        raise FileNotFoundError(f"This file doesn't exist: {data_path}")
+    raise FileNotFoundError(f"This file doesn't exist: {data_path}")
 
 
 class TestGrepIter:
@@ -40,7 +43,7 @@ class TestGrepIter:
         ]
 
     def test_empty(self):
-        assert list(grepiter([], [""])) == []
+        assert not list(grepiter([], [""]))
 
 
 class TestGrepFile:
@@ -67,8 +70,8 @@ class TestGrepFile:
             next(empty_file_greped)
 
     def test_mocking(self, mocker: MockerFixture, file_path: Path):
-        m = mocker.mock_open(read_data="Данные\nУдалены")
-        mocker.patch("builtins.open", m)
+        mock = mocker.mock_open(read_data="Данные\nУдалены")
+        mocker.patch("builtins.open", mock)
         itr: Iterator[str] = grepfile(file_path, ["ДАННЫЕ"])
         assert next(itr) == "Данные"
         with pytest.raises(StopIteration):

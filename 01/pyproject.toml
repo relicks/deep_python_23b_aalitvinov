@@ -30,6 +30,9 @@ target-version = ["py311"]
 [tool.isort]
 profile = "black"
 
+[tool.pylint.master]
+disable = "too-few-public-methods"
+
 [tool.pylint.format]
 max-line-length = "88"
 

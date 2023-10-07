@@ -1,3 +1,6 @@
+"""Содержит тесты решения ДЗ#01.1."""
+# pylint: disable=redefined-outer-name
+
 from typing import NewType
 
 import pytest
@@ -13,10 +16,12 @@ GOOD_THRESHOLD = 0.8
 
 @pytest.fixture()
 def model() -> SomeModel:
+    """Fixture of model to test."""
     return SomeModel()
 
 
 def test_call_predict(model: SomeModel, mocker: MockerFixture):
+    """Проверки, что передается в predict модели в тестах."""
     spy = mocker.spy(model, "predict")
 
     message = "lIpSuM\n!щыщ"
@@ -90,6 +95,7 @@ def test_borders(
 def test_threshold_tweaks(
     model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
 ):
+    """Тесты с изменением порогов предиктора."""
     new_bad_threshold = 0.5
     new_good_threshold = 0.95
     mocker.patch.object(model, "predict", return_value=predict_returns)
