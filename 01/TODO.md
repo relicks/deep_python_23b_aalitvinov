@@ -3,11 +3,13 @@
 ## Done
 
 * внутренние подкаталоги затрудняют проверку, лучше без них
-* +проверки, что передается в predict модели в тестах (см. `test_call_predict`)
+* +проверки, что передается в predict модели в тестах (см. `test_predict_message_mood.test_call_predict`)
     <https://github.com/relicks/deep_python_23b_aalitvinov/commit/57aea7ca1f1a1790478a01feb0caacd4fd407c3b>
+* +краевые и околокраевые случаи порогов для предикта (см. `test_predict_message_mood.test_borders`)
+    <https://github.com/relicks/deep_python_23b_aalitvinov/commit/3ecb8f6cd91412e526588dd04beaee5f791959ec>
+* +тесты с изменением порогов предиктора (см. `test_predict_message_mood.test_threshold_tweaks`)
+    <https://github.com/relicks/deep_python_23b_aalitvinov/commit/dc7b15c64de87a063b45a970977743f989873431>
 
 ## TODO
 
-* +краевые и околокраевые случаи порогов для предикта
-* +тесты с изменением порогов предиктора
 * +тесты генератора: несколько совпадений, проверка совпадения с учетом регистронезависимости, совпадение нескольких фильтров в одной строке, слово фильтр целиком совпадает со строкой в файле

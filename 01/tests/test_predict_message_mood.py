@@ -46,10 +46,8 @@ def test_call_predict(model: SomeModel, mocker: MockerFixture):
 def test_normal_returns(
     model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
 ):
-    """Проверяются нормальные случаи порогов для `predict`a."""
-    mock = mocker.Mock(return_value=predict_returns)
-    model = SomeModel()
-    mocker.patch.object(model, "predict", mock)
+    """Проверяются нормальные случаи порогов для `predict`'a."""
+    mocker.patch.object(model, "predict", return_value=predict_returns)
     assert predict_message_mood("lIpSuM", model, BAD_THRESHOLD, GOOD_THRESHOLD) == out
 
 
@@ -75,10 +73,8 @@ def test_normal_returns(
 def test_borders(
     model: SomeModel, predict_returns: float, out: str, mocker: MockerFixture
 ):
-    """Проверяются краевые и околокраевые случаи порогов для `predict`a."""
-    mock = mocker.Mock(return_value=predict_returns)
-    model = SomeModel()
-    mocker.patch.object(model, "predict", mock)
+    """Проверяются краевые и околокраевые случаи порогов для `predict`'a."""
+    mocker.patch.object(model, "predict", return_value=predict_returns)
     assert predict_message_mood("lIpSuM", model, BAD_THRESHOLD, GOOD_THRESHOLD) == out
 
 
