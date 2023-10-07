@@ -42,7 +42,7 @@ def lint(
     paths: list[str] | None = None,
 ):
     if not paths:
-        to_lint: str = " ".join(["tests", "src"])
+        to_lint: str = " ".join(c.lint_paths)
     else:
         to_lint: str = " ".join(paths)
 
@@ -71,4 +71,6 @@ namespace = Collection(
     lint,
     test,
 )
-namespace.configure({"python_bin_path": get_python_bin_path()})
+namespace.configure(
+    {"python_bin_path": get_python_bin_path(), "lint_paths": ["tests", "src"]}
+)

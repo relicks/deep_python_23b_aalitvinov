@@ -1,14 +1,19 @@
 {
     "jupyter.notebookFileRoot": "${workspaceFolder}",
     "python.testing.pytestArgs": [
-        "tests"
+        "tests",
+        "--color=yes"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "cSpell.words": [
+        "calabaria",
         "datafiles",
         "grepfile",
         "grepiter",
-        "околокраевые"
+        "wordfilter",
+        "калабарии",
+        "околокраевые",
+        "регистронезависимости"
     ],
 }

@@ -12,4 +12,12 @@
 
 ## TODO
 
-* +тесты генератора: несколько совпадений, проверка совпадения с учетом регистронезависимости, совпадение нескольких фильтров в одной строке, слово фильтр целиком совпадает со строкой в файле
+* +тесты генератора:
+  * несколько совпадений,
+    * см. `test_read_generator.TestGrepIter.test_several_words`
+  * проверка совпадения с учетом регистронезависимости,
+    * см. `test_read_generator.TestGrepIter.test_word_case`
+  * совпадение нескольких фильтров в одной строке,
+    * см. `test_read_generator.TestGrepIter.test_several_matches`
+  * слово фильтр целиком совпадает со строкой в файле
+    * см. `test_read_generator.TestGrepIter.test_match_whole_line`

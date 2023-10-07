@@ -8,7 +8,7 @@ TextFile: TypeAlias = TextIOBase
 
 
 def grepiter(iterable: Iterable[str], wordfilter: list[str]) -> Iterator[str]:
-    """Итеративно ищет список слов в каждом елементе `iterable`.
+    """Итеративно ищет список слов в каждом элементе `iterable`.
 
     Перебирает строки в итераторе и возвращает только
     те из них (строку целиком), где встретилось хотя бы одно из слов для поиска.
@@ -32,8 +32,8 @@ def grepfile(
         case TextIOBase():  # if opened file, then pass directly to grepiter
             yield from grepiter(file, wordfilter)
         case str() | PathLike():  # if path to file, then we open it
-            with open(file, encoding=encoding) as fstr:
-                yield from grepiter(fstr, wordfilter)
+            with open(file, encoding=encoding) as file_stream:
+                yield from grepiter(file_stream, wordfilter)
         case _:
             raise TypeError(
                 f"Incorrect file type: {type(file)}. "
