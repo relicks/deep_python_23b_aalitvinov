@@ -24,16 +24,16 @@ def parse_json(
     """
     if keyword_callback is not None:
         # pylint: disable-next=no-member
-        jdic: dict[str, str] = orjson.loads(json_str)
+        parsed_json: dict[str, str] = orjson.loads(json_str)
 
         if required_fields is None:
-            required_fields = list(jdic.keys())
+            required_fields = list(parsed_json.keys())
 
         if keywords is not None:
-            keywords = [kword.casefold() for kword in keywords]
+            keywords = [keyword.casefold() for keyword in keywords]
 
         for key in required_fields:  # iterating over json_dict keys
-            words = jdic[key].split()
+            words = parsed_json[key].split()
             for word in words:
                 if (keywords is None) or (word.casefold() in keywords):
                     keyword_callback(key, word)
