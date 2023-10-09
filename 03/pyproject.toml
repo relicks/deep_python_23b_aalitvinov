@@ -20,8 +20,15 @@ pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
 isort = "^5.12.0"
 flake8 = "^6.1.0"
+flake8-pyproject = "^1.2.3"
 ruff = "^0.0.292"
-black = "^23.9.1"
+black = { extras = ["jupyter"], version = "^23.9.1" }
+typing-extensions = "^4.8.0"
+
+[tool.flake8]
+extend-ignore = ["E203"]
+max-line-length = 88
+count = true
 
 [tool.black]
 line-length = 88

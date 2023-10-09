@@ -18,6 +18,7 @@ pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
 flake8 = "^6.1.0"
+flake8-pyproject = "^1.2.3"
 pylint = "^3.0.0"
 black = { extras = ["jupyter"], version = "^23.9.1" }
 mypy = "^1.5.1"
@@ -25,7 +26,6 @@ faker = "^19.6.2"
 factory-boy = "^3.3.0"
 ipykernel = "^6.25.2"
 ruff = "^0.0.292"
-flake8-pyproject = "^1.2.3"
 
 [tool.black]
 line-length = 88

@@ -34,11 +34,27 @@ def clean(c: Context, venv=False):
             print(f"Path not found: \t{path!s}")
 
 
+@task
+def mypy(c: Context, strict=False):
+    if strict:
+        c.run(
+            f"{c.python_bin_path}mypy -p src -p tests --strict --check-untyped-defs",
+            echo=True,
+            pty=True,
+        )
+    else:
+        c.run(
+            f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs",
+            echo=True,
+            pty=True,
+        )
+
+
 @task(iterable=["lint_paths"])
 def lint(
     c: Context,
     pylint: bool = False,
-    mypy: bool = True,
+    static_check: bool = True,
     paths: list[str] | None = None,
 ):
     if not paths:
@@ -52,10 +68,11 @@ def lint(
     c.run(f"{c.python_bin_path}ruff {to_lint}", echo=True)
     if pylint:
         c.run(f"{c.python_bin_path}pylint {to_lint}", echo=True)
-    if mypy:
-        c.run(
-            f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs", echo=True
-        )
+    if static_check:
+        mypy(c)
+        # c.run(
+        #     f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs", echo=True
+        # )
 
 
 @task
@@ -70,6 +87,7 @@ namespace = Collection(
     clean,
     lint,
     test,
+    mypy,
 )
 namespace.configure(
     {"python_bin_path": get_python_bin_path(), "lint_paths": ["tests", "src"]}
