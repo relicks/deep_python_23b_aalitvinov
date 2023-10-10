@@ -68,6 +68,9 @@ ignore = [
     "RUF002", # ambiguous cyrillic letters
 ]
 
+[tool.ruff.per-file-ignores]
+"**/test_custom_list.py" = ["RUF005"]
+
 [tool.ruff.isort]
 known-first-party = ["src"]
 

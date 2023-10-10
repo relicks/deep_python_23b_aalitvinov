@@ -60,29 +60,29 @@ class CustomList(list):
     @override
     def __eq__(self, __value: object) -> bool:
         if not isinstance(__value, type(self)):
-            return NotImplemented
+            return NotImplemented  # pragma: no cover
         return isclose(sum(self), sum(__value))
 
     @override
     def __le__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
-            return NotImplemented
+            return NotImplemented  # pragma: no cover
         return (sum(self) <= sum(__value)) or self == __value
 
     @override
     def __lt__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
-            return NotImplemented
+            return NotImplemented  # pragma: no cover
         return sum(self) < sum(__value)
 
     @override
     def __ge__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
-            return NotImplemented
-        return sum(self) >= sum(__value)
+            return NotImplemented  # pragma: no cover
+        return sum(self) >= sum(__value) or self == __value
 
     @override
     def __gt__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
-            return NotImplemented
+            return NotImplemented  # pragma: no cover
         return sum(self) > sum(__value)
