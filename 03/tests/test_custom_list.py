@@ -1,8 +1,10 @@
 import os
 from operator import neg
 
+import numpy as np
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from numpy.random import default_rng
 
 from src.custom_list import CustomList, Number
 
@@ -128,15 +130,15 @@ class TestSpecialRsub:  # other - self
         assert (left - right).is_equal(CustomList([1, 5]))
 
     def test_both_empty(self):
-        result = [] - CustomList()  # [] - CustomList()
+        result = [] - CustomList()
         assert result.is_equal(CustomList())
 
     @given(xs=custom_list_strategy)
     def test_only_one_empty(self, xs: list[Number]):
         neg_xs = list(map(neg, xs))
-        result = [] - CustomList(xs)  # [] - CustomList(xs)
+        result = [] - CustomList(xs)
         assert result.is_equal(CustomList(neg_xs))
-        result = xs - CustomList()  # xs - CustomList()
+        result = xs - CustomList()
         assert result.is_equal(CustomList(xs))
 
     @given(xs=..., ys=...)
@@ -149,8 +151,44 @@ class TestSpecialRsub:  # other - self
         assert right_was.is_equal(CustomList(ys))
 
 
+def sum_lists(l_sum: float, r_sum: float, l_length: int, r_length: int):
+    assert l_length >= 1
+    assert r_length >= 1
+
+    rng = default_rng()
+    left = rng.dirichlet(np.ones(l_length), size=1) * l_sum
+    right = rng.dirichlet(np.ones(r_length), size=1) * r_sum
+    return left.tolist()[0], right.tolist()[0]
+
+
 class TestSpecialEqualityChecks:
-    ...
+    @given(st.data())
+    def test_eq(self, data: st.DataObject):
+        n = data.draw(st.integers())
+        elements = st.integers(min_value=1, max_value=100_000)
+        ls, rs = sum_lists(n, n, data.draw(elements), data.draw(elements))
+        assert CustomList(ls) == CustomList(rs)
+
+    def test_eq_empty(self):
+        assert CustomList([]) == CustomList([])
+
+    @given(st.data())
+    def test_le(self, data: st.DataObject):  # self <= other
+        max_value = int(1e15)
+        l_sum = data.draw(st.integers(max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=l_sum + 1, max_value=max_value))
+        elements = st.integers(min_value=1, max_value=100_000)
+        ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
+        assert CustomList(ls) <= CustomList(rs)
+
+    @given(st.data())
+    def test_lt(self, data: st.DataObject):  # self < other
+        max_value = int(1e15)
+        l_sum = data.draw(st.integers(max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=l_sum + 1, max_value=max_value))
+        elements = st.integers(min_value=1, max_value=100_000)
+        ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
+        assert CustomList(ls) < CustomList(rs)
 
 
 # class TestSpecialLe: ...

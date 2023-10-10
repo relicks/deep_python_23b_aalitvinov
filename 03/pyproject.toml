@@ -25,6 +25,7 @@ ruff = "^0.0.292"
 black = { extras = ["jupyter"], version = "^23.9.1" }
 typing-extensions = "^4.8.0"
 hypothesis = {extras = ["cli"], version = "^6.87.3"}
+numpy = "^1.26.0"
 
 [tool.flake8]
 extend-ignore = ["E203"]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from itertools import zip_longest
+from math import isclose
 from typing import Self, TypeAlias
 
 from typing_extensions import override
@@ -60,13 +61,13 @@ class CustomList(list):
     def __eq__(self, __value: object) -> bool:
         if not isinstance(__value, type(self)):
             return NotImplemented
-        return sum(self) == sum(__value)  # type: ignore
+        return isclose(sum(self), sum(__value))
 
     @override
     def __le__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
             return NotImplemented
-        return sum(self) <= sum(__value)
+        return (sum(self) <= sum(__value)) or self == __value
 
     @override
     def __lt__(self, __value: list[Number]) -> bool:
