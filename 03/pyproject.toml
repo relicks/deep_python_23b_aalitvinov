@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.2.0"
@@ -24,6 +24,7 @@ flake8-pyproject = "^1.2.3"
 ruff = "^0.0.292"
 black = { extras = ["jupyter"], version = "^23.9.1" }
 typing-extensions = "^4.8.0"
+hypothesis = {extras = ["cli"], version = "^6.87.3"}
 
 [tool.flake8]
 extend-ignore = ["E203"]

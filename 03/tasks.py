@@ -36,18 +36,11 @@ def clean(c: Context, venv=False):
 
 @task
 def mypy(c: Context, strict=False):
+    args = ["-p", "src", "-p", "tests", "--check-untyped-defs"]
     if strict:
-        c.run(
-            f"{c.python_bin_path}mypy -p src -p tests --strict --check-untyped-defs",
-            echo=True,
-            pty=True,
-        )
-    else:
-        c.run(
-            f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs",
-            echo=True,
-            pty=True,
-        )
+        args.append("--strict")
+
+    c.run(f"{c.python_bin_path}mypy {' '.join(args)}", echo=True, pty=True)
 
 
 @task(iterable=["lint_paths"])
@@ -70,17 +63,20 @@ def lint(
         c.run(f"{c.python_bin_path}pylint {to_lint}", echo=True)
     if static_check:
         mypy(c)
-        # c.run(
-        #     f"{c.python_bin_path}mypy -p src -p tests --check-untyped-defs", echo=True
-        # )
 
 
 @task
-def test(c: Context, cov=False):
+def test(c: Context, cov=False, missing=True):
+    args = []
     if cov:
-        c.run(f"{c.python_bin_path}pytest -q --cov-branch --cov=src", pty=True)
-    else:
-        c.run(f"{c.python_bin_path}pytest", pty=True)
+        args.extend(["-q", "--cov-branch", "--cov=src"])
+        if missing:
+            args.append("--cov-report=term-missing")
+
+    c.run(
+        f"{c.python_bin_path}pytest {' '.join(args)}",
+        pty=True,
+    )
 
 
 namespace = Collection(
