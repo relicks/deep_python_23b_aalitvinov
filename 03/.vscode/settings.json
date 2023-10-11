@@ -1,7 +1,7 @@
 {
     "jupyter.notebookFileRoot": "${workspaceFolder}",
     "python.testing.pytestArgs": [
-        "tests",
+        "test_custom_list.py",
         "--color=yes",
         "--doctest-modules",
     ],

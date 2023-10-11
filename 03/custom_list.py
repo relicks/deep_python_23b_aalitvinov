@@ -1,3 +1,4 @@
+"""Содержит решение для первого пункта домашнего задания #03."""
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence

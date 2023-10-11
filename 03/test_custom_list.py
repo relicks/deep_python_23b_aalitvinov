@@ -1,3 +1,6 @@
+"""Содержит тесты решения первого пункта домашнего задания #03."""
+# pylint: disable=missing-function-docstring, protected-access, missing-class-docstring
+# pylint: disable=invalid-name, eval-used, use-list-literal, unneeded-not
 import os
 from math import isclose
 
@@ -6,7 +9,7 @@ from hypothesis import given, note, settings
 from hypothesis import strategies as st
 from numpy.random import default_rng
 
-from src.custom_list import CustomList, Number
+from custom_list import CustomList, Number
 
 settings.register_profile("release", max_examples=1000)
 settings.register_profile("dev", max_examples=50)
@@ -22,7 +25,7 @@ def test__zipper():
 def test__zipper_empty():
     zipper = CustomList()._zipper
     mapped = zipper(lambda lr: lr[0] / lr[1], [], [])
-    assert list(mapped) == []
+    assert not list(mapped)
 
 
 custom_list_strategy: st.SearchStrategy[list[Number]] = st.lists(
@@ -188,9 +191,12 @@ class TestSpecialEqualityChecks:
             min_size=1,
         ).filter(lambda list_x: not isclose(sum(list_x), 0))
     )
-    def test_eq_half_empty(self, xs: list[float]):
+    def test_neq_half_empty(self, xs: list[float]):
         assert not CustomList(xs) == CustomList([])
         assert not CustomList([]) == CustomList(xs)
+
+        assert CustomList(xs) != CustomList([])
+        assert CustomList([]) != CustomList(xs)
 
     @given(st.data())
     def test_le(self, data: st.DataObject):  # self <= other

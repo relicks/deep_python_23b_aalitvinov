@@ -18,8 +18,15 @@ def get_python_bin_path() -> str | None:
 
 
 @task
-def clean(c: Context, venv=False):
-    paths = [".pytest_cache", ".mypy_cache", ".ruff_cache", ".coverage"]
+def clean(_: Context, venv=False):
+    paths = [
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        ".coverage",
+        ".hypothesis",
+        "__pycache__",
+    ]
     if venv:
         paths.append(".venv")
     paths = (Path(p).resolve() for p in paths)
@@ -36,7 +43,9 @@ def clean(c: Context, venv=False):
 
 @task
 def mypy(c: Context, strict=False):
-    args = ["-p", "src", "-p", "tests", "--check-untyped-defs"]
+    args = list(c.lint_paths)
+    args.extend(["--check-untyped-defs"])
+
     if strict:
         args.append("--strict")
 
@@ -86,5 +95,8 @@ namespace = Collection(
     mypy,
 )
 namespace.configure(
-    {"python_bin_path": get_python_bin_path(), "lint_paths": ["tests", "src"]}
+    {
+        "python_bin_path": get_python_bin_path(),
+        "lint_paths": ["custom_list.py", "test_custom_list.py"],
+    }
 )

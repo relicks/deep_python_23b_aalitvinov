@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Alexander Litvinov <axndr.litvinov@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "src" }]
+packages = [{ include = "custom_list.py" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
@@ -69,10 +69,10 @@ ignore = [
 ]
 
 [tool.ruff.per-file-ignores]
-"**/test_custom_list.py" = ["RUF005"]
+"test_custom_list.py" = ["RUF005"]
 
 [tool.ruff.isort]
-known-first-party = ["src"]
+known-first-party = ["custom_list"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
