@@ -78,7 +78,7 @@ def lint(
 def test(c: Context, cov=False, missing=True):
     args = []
     if cov:
-        args.extend(["-q", "--cov-branch", "--cov=src"])
+        args.extend(["-q", "--cov-branch", "--cov=."])
         if missing:
             args.append("--cov-report=term-missing")
 

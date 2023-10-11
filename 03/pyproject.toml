@@ -24,7 +24,7 @@ flake8-pyproject = "^1.2.3"
 ruff = "^0.0.292"
 black = { extras = ["jupyter"], version = "^23.9.1" }
 typing-extensions = "^4.8.0"
-hypothesis = {extras = ["cli"], version = "^6.87.3"}
+hypothesis = { extras = ["cli"], version = "^6.87.3" }
 numpy = "^1.26.0"
 
 [tool.flake8]
@@ -38,6 +38,7 @@ target-version = ["py311"]
 
 [tool.isort]
 profile = "black"
+known_first_party = ["custom_list"]
 
 [tool.pylint.master]
 disable = "too-few-public-methods"
@@ -75,9 +76,11 @@ ignore = [
 known-first-party = ["custom_list"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+# pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
 
+[tool.coverage.report]
+omit = ["./.venv/*", "tasks.py", "test_custom_list.py"]
 
 [build-system]
 requires = ["poetry-core"]

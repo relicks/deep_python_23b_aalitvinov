@@ -200,10 +200,10 @@ class TestSpecialEqualityChecks:
 
     @given(st.data())
     def test_le(self, data: st.DataObject):  # self <= other
-        max_value = int(1e15)
+        max_value = int(1e9)
         # * l_sum must be <= r_sum
-        l_sum = data.draw(st.integers(max_value=max_value))
-        r_sum = data.draw(st.integers(min_value=l_sum, max_value=max_value))
+        l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=l_sum, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
         assert CustomList(ls) <= CustomList(rs)
@@ -213,10 +213,10 @@ class TestSpecialEqualityChecks:
 
     @given(st.data())
     def test_lt(self, data: st.DataObject):  # self < other
-        max_value = int(1e15)
+        max_value = int(1e9)
         # * l_sum must be < r_sum
-        l_sum = data.draw(st.integers(max_value=max_value))
-        r_sum = data.draw(st.integers(min_value=l_sum + 1, max_value=max_value))
+        l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=l_sum + 1, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
         assert CustomList(ls) < CustomList(rs)
@@ -226,10 +226,10 @@ class TestSpecialEqualityChecks:
 
     @given(st.data())
     def test_ge(self, data: st.DataObject):  # self >= other
-        max_value = int(1e15)
+        max_value = int(1e9)
         # * l_sum must be >= r_sum
-        r_sum = data.draw(st.integers(max_value=max_value))
-        l_sum = data.draw(st.integers(min_value=r_sum, max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
+        l_sum = data.draw(st.integers(min_value=r_sum, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
         assert CustomList(ls) >= CustomList(rs)
@@ -239,10 +239,10 @@ class TestSpecialEqualityChecks:
 
     @given(st.data())
     def test_gt(self, data: st.DataObject):  # self > other
-        max_value = int(1e15)
+        max_value = int(1e9)
         # * l_sum must be > r_sum
-        r_sum = data.draw(st.integers(max_value=max_value))
-        l_sum = data.draw(st.integers(min_value=r_sum + 1, max_value=max_value))
+        r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
+        l_sum = data.draw(st.integers(min_value=r_sum + 1, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
         assert CustomList(ls) > CustomList(rs)

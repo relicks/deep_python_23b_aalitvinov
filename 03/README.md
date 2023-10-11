@@ -1,20 +1,28 @@
-# Домашнее задание #01 (введение, тестирование). Решение
+# Домашнее задание #03 (объектная модель, ООП). Решение
+
+* Решение первого пункта ДЗ#03 содержится в `./custom_list.py`
+* Решение второго пункта ДЗ#03 (тесты) содержится в `./test_custom_list.py`
 
 ## Report
 
-<!-- 100% of tests are passing. -->
+100% of tests are passing.
 
 ### Coverage report
 
-<!-- ```text
-``` -->
+```text
+Name             Stmts   Miss Branch BrPart  Cover
+--------------------------------------------------
+custom_list.py      45      0     20      0   100%
+--------------------------------------------------
+TOTAL               45      0     20      0   100%
+```
 
 ## Testing
 
 To run tests and generate coverage report you will need:
 
-- Python ^3.11
-- Poetry ^1.6
+* Python >=3.11,<3.13
+* Poetry ^1.6
 
 Then follow these instructions:
 
