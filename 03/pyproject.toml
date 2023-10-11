@@ -4,10 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Alexander Litvinov <axndr.litvinov@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "src" }]
+packages = [{ include = "custom_list.py" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 
 [tool.poetry.group.dev.dependencies]
 invoke = "^2.2.0"
@@ -20,8 +20,17 @@ pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
 isort = "^5.12.0"
 flake8 = "^6.1.0"
+flake8-pyproject = "^1.2.3"
 ruff = "^0.0.292"
-black = "^23.9.1"
+black = { extras = ["jupyter"], version = "^23.9.1" }
+typing-extensions = "^4.8.0"
+hypothesis = { extras = ["cli"], version = "^6.87.3" }
+numpy = "^1.26.0"
+
+[tool.flake8]
+extend-ignore = ["E203"]
+max-line-length = 88
+count = true
 
 [tool.black]
 line-length = 88
@@ -29,6 +38,7 @@ target-version = ["py311"]
 
 [tool.isort]
 profile = "black"
+known_first_party = ["custom_list"]
 
 [tool.pylint.master]
 disable = "too-few-public-methods"
@@ -59,13 +69,18 @@ ignore = [
     "RUF002", # ambiguous cyrillic letters
 ]
 
+[tool.ruff.per-file-ignores]
+"test_custom_list.py" = ["RUF005"]
+
 [tool.ruff.isort]
-known-first-party = ["src"]
+known-first-party = ["custom_list"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+# pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
 
+[tool.coverage.report]
+omit = ["./.venv/*", "tasks.py", "test_custom_list.py"]
 
 [build-system]
 requires = ["poetry-core"]
