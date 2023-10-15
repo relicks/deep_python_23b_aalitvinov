@@ -4,9 +4,9 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from itertools import zip_longest
 from math import isclose
-from typing import Self, TypeAlias
+from typing import TypeAlias
 
-from typing_extensions import override
+from typing_extensions import Self, override
 
 Number: TypeAlias = float | int
 
