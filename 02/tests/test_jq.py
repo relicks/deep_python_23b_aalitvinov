@@ -36,7 +36,7 @@ def test_noop(mocker: MockerFixture):
         json_str='{"key1": "Word1 word2", "key2": "word2 word3"}',
         keyword_callback=None,
     )
-    mock.assert_not_called()
+    mock.assert_not_called()  # ! assert
 
 
 def test_alpha_one(json_str_alpha: str, mocker: MockerFixture):
@@ -47,7 +47,7 @@ def test_alpha_one(json_str_alpha: str, mocker: MockerFixture):
         keywords=["HArd"],
         keyword_callback=callback,
     )
-    callback.assert_called_once_with("apply", "hard")
+    callback.assert_called_once_with("apply", "hard")  # ! assert
 
 
 def test_alpha_two_specified(json_str_alpha: str, mocker: MockerFixture):
@@ -100,7 +100,7 @@ def test_beta_not_called(json_str_beta: str, mocker: MockerFixture, kw_list: lis
         keywords=kw_list,
         keyword_callback=callback,
     )
-    callback.assert_not_called()
+    callback.assert_not_called()  # ! assert
 
 
 def test_beta_one(json_str_beta: str, mocker: MockerFixture):
@@ -111,7 +111,7 @@ def test_beta_one(json_str_beta: str, mocker: MockerFixture):
         keywords=["палкА"],
         keyword_callback=callback,
     )
-    callback.assert_called_once_with("Головной!", "палка")
+    callback.assert_called_once_with("Головной!", "палка")  # ! assert
 
 
 def test_beta_many(json_str_beta: str, mocker: MockerFixture):
@@ -153,4 +153,4 @@ def test_all_call(mocker: MockerFixture):
 def test_giant_json(json_str_giant: str, mocker: MockerFixture):
     callback = mocker.stub()
     parse_json(json_str=json_str_giant, keyword_callback=callback)
-    callback.assert_called()
+    callback.assert_called()  # ! assert
