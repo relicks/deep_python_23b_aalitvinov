@@ -172,17 +172,31 @@ def sum_lists(l_sum: float, r_sum: float, l_length: int, r_length: int):
     return left.tolist()[0], right.tolist()[0]
 
 
-class TestSpecialEqualityChecks:
+class TestSpecialEq:
     @given(st.data())
-    def test_eq(self, data: st.DataObject):
+    def test_fuzzy(self, data: st.DataObject):
         n = data.draw(st.integers())
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(n, n, data.draw(elements), data.draw(elements))
         assert CustomList(ls) == CustomList(rs)
 
-    def test_eq_empty(self):
+    def test_empty(self):
         assert CustomList([]) == CustomList([])
 
+    @given(
+        xs=st.lists(
+            st.floats(allow_infinity=False, allow_nan=False).filter(
+                lambda x: not isclose(x, 0)
+            ),
+            min_size=1,
+        ).filter(lambda list_x: not isclose(sum(list_x), 0))
+    )
+    def test_half_empty(self, xs: list[float]):
+        assert not CustomList(xs) == CustomList([])
+        assert not CustomList([]) == CustomList(xs)
+
+
+class TestSpecialNe:
     @given(
         xs=st.lists(
             st.floats(allow_infinity=False, allow_nan=False).filter(
@@ -198,8 +212,10 @@ class TestSpecialEqualityChecks:
         assert CustomList(xs) != CustomList([])
         assert CustomList([]) != CustomList(xs)
 
+
+class TestSpecialLe:
     @given(st.data())
-    def test_le(self, data: st.DataObject):  # self <= other
+    def test_fuzzy(self, data: st.DataObject):  # self <= other
         max_value = int(1e9)
         # * l_sum must be <= r_sum
         l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
@@ -208,11 +224,13 @@ class TestSpecialEqualityChecks:
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
         assert CustomList(ls) <= CustomList(rs)
 
-    def test_le_empty(self):
+    def test_empty(self):
         assert CustomList([]) <= CustomList([])
 
+
+class TestSpecialLt:
     @given(st.data())
-    def test_lt(self, data: st.DataObject):  # self < other
+    def test_fuzzy(self, data: st.DataObject):  # self < other
         max_value = int(1e9)
         # * l_sum must be < r_sum
         l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
@@ -224,8 +242,10 @@ class TestSpecialEqualityChecks:
     def test_lt_empty(self):
         assert not CustomList([]) < CustomList([])
 
+
+class TestSpecialGe:
     @given(st.data())
-    def test_ge(self, data: st.DataObject):  # self >= other
+    def test_fuzzy(self, data: st.DataObject):  # self >= other
         max_value = int(1e9)
         # * l_sum must be >= r_sum
         r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
@@ -237,8 +257,10 @@ class TestSpecialEqualityChecks:
     def test_ge_empty(self):
         assert CustomList([]) >= CustomList([])
 
+
+class TestSpecialGt:
     @given(st.data())
-    def test_gt(self, data: st.DataObject):  # self > other
+    def test_fuzzy(self, data: st.DataObject):  # self > other
         max_value = int(1e9)
         # * l_sum must be > r_sum
         r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
@@ -250,6 +272,8 @@ class TestSpecialEqualityChecks:
     def test_gt_empty(self):
         assert not CustomList([]) > CustomList([])
 
+
+class TestSpecialEqualityChecks:
     @given(
         xs=st.lists(
             st.floats(allow_infinity=False, allow_nan=False).filter(
