@@ -5,6 +5,7 @@ import os
 from math import isclose
 
 import numpy as np
+import pytest
 from hypothesis import given, note, settings
 from hypothesis import strategies as st
 from numpy.random import default_rng
@@ -173,7 +174,7 @@ class TestSpecialRadd:  # other + self
 
 
 class TestSpecialSub:  # self - other
-    def test_both_custom(self):
+    def test_custom_long_custom_short(self):
         left = CustomList([5, 1, 3, 7])
         right = CustomList([1, 2, 7])
         hashes_before = (hash(tuple(left)), hash(tuple(right)))
@@ -183,12 +184,42 @@ class TestSpecialSub:  # self - other
         hashes_after = (hash(tuple(left)), hash(tuple(right)))
         assert hashes_before == hashes_after
 
-    def test_only_left_custom(self):
+    def test_custom_short_custom_long(self):
+        left = CustomList([-4, 11])
+        right = CustomList([5, -11, 4, 90, 8])
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert (left - right).is_equal(CustomList([-9, 22, -4, -90, -8]))
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    def test_custom_equal_length(self):
+        left = CustomList([-77, 6, 16])
+        right = CustomList([4, 0, 8])
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert (left - right).is_equal(CustomList([-81, 6, 8]))
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    def test_custom_short_list_long(self):
         left = CustomList([1])
         right = [2, 5]
         hashes_before = (hash(tuple(left)), hash(tuple(right)))
 
         assert (left - right).is_equal(CustomList([-1, -5]))
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    def test_custom_long_list_short(self):
+        left = CustomList([6, -7, -5, 3])
+        right = [0, 44, 3]
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert (left - right).is_equal(CustomList([6, -51, -8, 3]))
 
         hashes_after = (hash(tuple(left)), hash(tuple(right)))
         assert hashes_before == hashes_after
@@ -219,12 +250,32 @@ class TestSpecialSub:  # self - other
 
 
 class TestSpecialRsub:  # other - self
-    def test_only_right_custom(self):
+    def test_list_long_custom_short(self):
         left = [2, 5]
         right = CustomList([1])
         hashes_before = (hash(tuple(left)), hash(tuple(right)))
 
         assert (left - right).is_equal(CustomList([1, 5]))
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    def test_list_short_custom_long(self):
+        left = [0, 12, -99]
+        right = CustomList([-7, 0, 10, 55, 0])
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert (left - right).is_equal(CustomList([7, 12, -109, -55, 0]))
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    def test_list_custom_equal_length(self):
+        left = [0, 0, -1, 4]
+        right = CustomList([0, 14, 1, 5])
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert (left - right).is_equal(CustomList([0, -14, -2, -1]))
 
         hashes_after = (hash(tuple(left)), hash(tuple(right)))
         assert hashes_before == hashes_after
@@ -270,7 +321,31 @@ class TestSpecialEq:
         n = data.draw(st.integers())
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(n, n, data.draw(elements), data.draw(elements))
-        assert CustomList(ls) == CustomList(rs)
+        left, right = CustomList(ls), CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left == right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+    @pytest.mark.parametrize(
+        ("ls", "rs"),
+        [
+            ([5, 1, 3, 7, 0], [2, 5, 9]),
+            ([-1, -17, 8], [-10, 4, -4]),
+            ([5], [2, 3]),
+        ],
+    )
+    def test_differing_lengths(self, ls, rs):
+        left = CustomList(ls)
+        right = CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left == right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
 
     def test_empty(self):
         assert CustomList([]) == CustomList([])
@@ -304,62 +379,97 @@ class TestSpecialNe:
         assert CustomList(xs) != CustomList([])
         assert CustomList([]) != CustomList(xs)
 
+    @given(xs=..., ys=...)
+    def test_purity(self, xs: list[float], ys: list[float]):
+        left = CustomList(xs)
+        right = CustomList(ys)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
 
-class TestSpecialLe:
+        _ = left != right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
+
+
+class TestSpecialLe:  # self <= other
     @given(st.data())
-    def test_fuzzy(self, data: st.DataObject):  # self <= other
+    def test_fuzzy(self, data: st.DataObject):
         max_value = int(1e9)
         # * l_sum must be <= r_sum
         l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
         r_sum = data.draw(st.integers(min_value=l_sum, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
-        assert CustomList(ls) <= CustomList(rs)
+        left, right = CustomList(ls), CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left <= right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
 
     def test_empty(self):
         assert CustomList([]) <= CustomList([])
 
 
-class TestSpecialLt:
+class TestSpecialLt:  # self < other
     @given(st.data())
-    def test_fuzzy(self, data: st.DataObject):  # self < other
+    def test_fuzzy(self, data: st.DataObject):
         max_value = int(1e9)
         # * l_sum must be < r_sum
         l_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
         r_sum = data.draw(st.integers(min_value=l_sum + 1, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
-        assert CustomList(ls) < CustomList(rs)
+        left, right = CustomList(ls), CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left < right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
 
     def test_lt_empty(self):
         assert not CustomList([]) < CustomList([])
 
 
-class TestSpecialGe:
+class TestSpecialGe:  # self >= other
     @given(st.data())
-    def test_fuzzy(self, data: st.DataObject):  # self >= other
+    def test_fuzzy(self, data: st.DataObject):
         max_value = int(1e9)
         # * l_sum must be >= r_sum
         r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
         l_sum = data.draw(st.integers(min_value=r_sum, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
-        assert CustomList(ls) >= CustomList(rs)
+        left, right = CustomList(ls), CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left >= right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
 
     def test_ge_empty(self):
         assert CustomList([]) >= CustomList([])
 
 
-class TestSpecialGt:
+class TestSpecialGt:  # self > other
     @given(st.data())
-    def test_fuzzy(self, data: st.DataObject):  # self > other
+    def test_fuzzy(self, data: st.DataObject):
         max_value = int(1e9)
         # * l_sum must be > r_sum
         r_sum = data.draw(st.integers(min_value=-max_value, max_value=max_value))
         l_sum = data.draw(st.integers(min_value=r_sum + 1, max_value=max_value + 1))
         elements = st.integers(min_value=1, max_value=100_000)
         ls, rs = sum_lists(l_sum, r_sum, data.draw(elements), data.draw(elements))
-        assert CustomList(ls) > CustomList(rs)
+        left, right = CustomList(ls), CustomList(rs)
+        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+
+        assert left > right
+
+        hashes_after = (hash(tuple(left)), hash(tuple(right)))
+        assert hashes_before == hashes_after
 
     def test_gt_empty(self):
         assert not CustomList([]) > CustomList([])
