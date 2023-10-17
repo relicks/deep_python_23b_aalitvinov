@@ -1,5 +1,7 @@
 # Домашнее задание #03 (объектная модель, ООП). Решение
 
+**Исправления см. в [TODO.md](https://github.com/relicks/deep_python_23b_aalitvinov/blob/main/03/TODO.md)**
+
 * Решение первого пункта ДЗ#03 содержится в `./custom_list.py`
 * Решение второго пункта ДЗ#03 (тесты) содержится в `./test_custom_list.py`
 
@@ -12,16 +14,16 @@
 ```text
 Name             Stmts   Miss Branch BrPart  Cover
 --------------------------------------------------
-custom_list.py      45      0     20      0   100%
+custom_list.py      50      0      4      0   100%
 --------------------------------------------------
-TOTAL               45      0     20      0   100%
+TOTAL               50      0      4      0   100%
 ```
 
 ## Testing
 
 To run tests and generate coverage report you will need:
 
-* Python >=3.11,<3.13
+* Python >=3.10,<3.13
 * Poetry ^1.6
 
 Then follow these instructions:
@@ -44,8 +46,8 @@ Then follow these instructions:
 1. Set up the virtual environment, don't forget to specify the path to python3.11:
 
    ```bash
-   poetry env use path/to/your/python3.11
-   poetry install
+   poetry env use path/to/your/python3.10
+   poetry install --with dev-opts
    ```
 
 1. Activate the virtual environment (alternatively, ensure any python or git-related command is preceded by `poetry run`):
