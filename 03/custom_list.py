@@ -1,7 +1,7 @@
 """Содержит решение для первого пункта домашнего задания #03."""
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable
 from itertools import zip_longest
 from math import isclose
 from typing import TypeAlias
@@ -32,8 +32,8 @@ class CustomList(list):
     @staticmethod
     def _zipper(
         func: Callable[[tuple[Number, Number]], Number],
-        left: Sequence[Number],
-        right: Sequence[Number],
+        left: Iterable[Number],
+        right: Iterable[Number],
     ) -> map[Number]:
         return map(func, zip_longest(left, right, fillvalue=0))
 
@@ -46,16 +46,16 @@ class CustomList(list):
         return f"data={super().__str__()}, sum={sum(self)}"
 
     @override
-    def __add__(self, right: Sequence[Number]) -> Self:  # type: ignore
+    def __add__(self, right: Iterable[Number]) -> Self:  # type: ignore
         return type(self)(self._zipper(sum, self, right))
 
-    def __radd__(self, left: Sequence[Number]) -> Self:
+    def __radd__(self, left: Iterable[Number]) -> Self:
         return type(self)(self._zipper(sum, left, self))
 
-    def __sub__(self, right: Sequence[Number]) -> Self:
+    def __sub__(self, right: Iterable[Number]) -> Self:
         return type(self)(self._zipper(lambda tpl: tpl[0] - tpl[1], self, right))
 
-    def __rsub__(self, left: Sequence[Number]) -> Self:
+    def __rsub__(self, left: Iterable[Number]) -> Self:
         return type(self)(self._zipper(lambda tpl: tpl[0] - tpl[1], left, self))
 
     @override
