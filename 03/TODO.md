@@ -27,9 +27,10 @@
         * `test_custom_list.TestSpecialSub.test_custom_*` **5 тестов**
         * `test_custom_list.TestSpecialRsub.test_list_*` **3 теста**
 1. тест str
-    * Это было реализовано в `test_custom_list.TestSpecialEq.test_fuzzy`
-    * Сделал дополнительный параметризованный тест
-1. тест равенства списков с разными элементами, но одинаковой суммой
     * Это было реализовано в `test_custom_list.TestSpecialStr.test_validity`
     * Сделал дополнительный тест с конкретными примерами в
     `test_custom_list.TestSpecialStr.test_concrete`
+
+1. тест равенства списков с разными элементами, но одинаковой суммой
+    * Это было реализовано в `test_custom_list.TestSpecialEq.test_fuzzy`
+    * Сделал дополнительный параметризованный тест `test_custom_list.TestSpecialEq.test_differing_lengths`
