@@ -65,6 +65,13 @@ class CustomList(list):
         return isclose(sum(self), sum(__value))
 
     @override
+    def __ne__(self, __value: object) -> bool:
+        result = self.__eq__(__value)
+        if result is not NotImplemented:
+            return not result
+        return NotImplemented  # pragma: no cover
+
+    @override
     def __le__(self, __value: list[Number]) -> bool:
         if not isinstance(__value, type(self)):
             return NotImplemented  # pragma: no cover
