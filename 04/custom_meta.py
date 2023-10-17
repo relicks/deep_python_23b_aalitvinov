@@ -13,13 +13,17 @@ def prefix_dict(dict_: dict[str, Any], prefix: str | None = None):
     }
 
 
+def attr_setter(obj: object, name: str, value: Any, supertype: object):
+    print(f"Setting from {obj.__class__.__name__}, {name = }, {value = }")
+    if name.startswith(("__", PREFIX)):
+        supertype.__setattr__(name, value)
+    else:
+        supertype.__setattr__(f"{PREFIX}{name}", value)
+
+
 class AttrSetter:
     def __setattr__(self, name: str, value: Any) -> None:
-        print(f"Setting from {self.__class__.__name__}, {name = }, {value = }")
-        if name.startswith(("__", PREFIX)):
-            super().__setattr__(name, value)
-        else:
-            super().__setattr__(f"{PREFIX}{name}", value)
+        attr_setter(self, name, value, super())
 
 
 class CustomMeta(type):
@@ -48,8 +52,4 @@ class CustomMeta(type):
         return result
 
     def __setattr__(cls, name: str, value: Any) -> None:
-        print(f"Setting from {cls.__class__.__name__}, {name = }, {value = }")
-        if name.startswith(("__", PREFIX)):
-            super().__setattr__(name, value)
-        else:
-            super().__setattr__(f"{PREFIX}{name}", value)
+        attr_setter(cls, name, value, super())
