@@ -42,6 +42,11 @@ class TestSpecialStr:
         assert xs == str_data["data"]
         assert sum(xs) == str_data["sum"]
 
+    def test_concrete(self):
+        assert str(CustomList([5.2, 4])) == "data=[5.2, 4], sum=9.2"
+        assert str(CustomList([3, 2, 1])) == "data=[3, 2, 1], sum=6"
+        assert str(CustomList()) == "data=[], sum=0"
+
 
 class TestSpecialAdd:  # self + other
     def test_custom_long_custom_short(self):
