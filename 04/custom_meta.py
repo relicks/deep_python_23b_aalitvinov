@@ -1,3 +1,4 @@
+"""Содержит решение к первому пункту ДЗ#04."""
 from typing import Any
 
 from typing_extensions import Self

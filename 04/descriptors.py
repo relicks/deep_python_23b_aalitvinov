@@ -1,11 +1,14 @@
+"""Содержит решение ко второму пункту ДЗ#04."""
 import re
 from abc import ABC, abstractmethod
 from typing import Any
 
 
-# see https://docs.python.org/3/howto/descriptor.html#validator-class
+# from https://docs.python.org/3/howto/descriptor.html#validator-class
 class Validator(ABC):
-    def __set_name__(self, owner, name: str):
+    """Abstract base class for Validator data descriptors."""
+
+    def __set_name__(self, owner: type, name: str):
         self.private_name = "_" + name
 
     def __get__(self, obj: object, objtype: type | None = None):
@@ -22,7 +25,9 @@ class Validator(ABC):
         pass
 
 
-class UInt64(Validator):
+class UInt64Validator(Validator):
+    """Data descriptor that checks input to be valid 64-bit unsigned int."""
+
     _min_val = 0
     _max_val = 2**64 - 1
 
@@ -34,9 +39,12 @@ class UInt64(Validator):
                 f"Expected {value!r} to be in range "
                 f"[{self._min_val}, {self._max_val}]"
             )
+        return None
 
 
-class Email(Validator):
+class EmailValidator(Validator):
+    """Data descriptor that checks input to be valid email `str`."""
+
     _email_pattern = re.compile(
         r"^(?![\w\.@]*\.\.)(?![\w\.@]*\.@)(?![\w\.]*@\.)\w+[\w\.]*@[\w\.]+\.\w{2,}$"
     )
@@ -46,9 +54,12 @@ class Email(Validator):
             return TypeError(f"Expected {value!r} to be of type str.")
         if re.match(self._email_pattern, value) is None:
             return ValueError(f"Expected {value!r} to be a valid email address.")
+        return None
 
 
-class Url(Validator):
+class UrlValidator(Validator):
+    """Data descriptor that checks input to be valid URL `str`."""
+
     # https://github.com/django/django/blob/stable/1.3.x/django/core/validators.py#L45
     _url_pattern = re.compile(
         r"^(?:http|ftp)s?://"  # scheme
@@ -61,8 +72,9 @@ class Url(Validator):
         re.UNICODE | re.IGNORECASE,
     )
 
-    def validate(self, value: Any) -> Exception | None:
+    def validate(self, value: Any) -> TypeError | ValueError | None:
         if not isinstance(value, str):
             return TypeError(f"Expected {value!r} to be of type str.")
         if re.match(self._url_pattern, value) is None:
             return ValueError(f"Expected {value!r} to be a valid URL.")
+        return None
