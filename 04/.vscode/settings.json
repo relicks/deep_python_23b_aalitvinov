@@ -1,0 +1,8 @@
+{
+    "python.testing.pytestArgs": [
+        "test_custom_meta.py",
+        "test_descriptors.py"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}

@@ -32,8 +32,6 @@ class CustomMeta(type):
     ) -> Self:
         print("meta __new__")
         new_dct = prefix_dict(dct)
-        # dct["__setattr__"] = AttrSetter.__setattr__
-        # new_class = super().__new__(cls, name, bases, new_dct)
         new_class = super().__new__(cls, name, (AttrSetter, *bases), new_dct)
         return new_class
 
@@ -41,14 +39,12 @@ class CustomMeta(type):
         cls: type[Any], name: str, bases: tuple[type, ...], dct: dict[str, Any]
     ) -> None:
         print("meta __init__")
-        # dct["__setattr__"] = AttrSetter.__setattr__
-        super().__init__(name, bases, dct)
+        # super().__init__(name, bases, dct)
 
     def __call__(cls: type[Any], *args, **kwargs) -> Any:
         print("meta __call__")
         result = super().__call__(*args, **kwargs)
         result.__dict__ = prefix_dict(result.__dict__)
-        # super(cls, result).__setattr__("__setattr__", attr_setter.__get__(result))
         return result
 
     def __setattr__(cls, name: str, value: Any) -> None:
