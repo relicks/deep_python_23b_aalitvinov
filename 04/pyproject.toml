@@ -10,11 +10,10 @@ packages = [{ include = "custom_meta.py" }, { include = "descriptors.py" }]
 python = ">=3.10,<3.13"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.4.0"
+pre-commit = "^3.5.0"
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
-typing-extensions = "^4.8.0"
 
 [tool.poetry.group.dev-opts]
 optional = true
@@ -26,10 +25,10 @@ ipykernel = "^6.25.2"
 isort = "^5.12.0"
 flake8 = "^6.1.0"
 flake8-pyproject = "^1.2.3"
-ruff = "^0.0.292"
-black = { extras = ["jupyter"], version = "^23.9.1" }
-mypy = "^1.5.1"
-pylint = "^2.17.5"
+ruff = "^0.1.0"
+black = { extras = ["jupyter"], version = "^23.10.0" }
+mypy = "^1.6.1"
+pylint = "^3.0.1"
 
 [tool.flake8]
 extend-ignore = ["E203"]
@@ -42,7 +41,7 @@ target-version = ["py310"]
 
 [tool.isort]
 profile = "black"
-known_first_party = ["custom_list"]
+known_first_party = ["custom_meta", "descriptors"]
 
 [tool.pylint.master]
 disable = "too-few-public-methods"
@@ -77,14 +76,14 @@ ignore = [
 "test_custom_list.py" = ["RUF005"]
 
 [tool.ruff.isort]
-known-first-party = ["custom_list"]
+known-first-party = ["custom_meta", "descriptors"]
 
 [tool.pytest.ini_options]
 # pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
 
 [tool.coverage.report]
-omit = ["./.venv/*", "tasks.py", "test_custom_list.py"]
+omit = ["./.venv/*", "tasks.py", "test_custom_meta.py", "test_descriptors.py"]
 
 [build-system]
 requires = ["poetry-core"]
