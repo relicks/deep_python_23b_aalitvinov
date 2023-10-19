@@ -1,3 +1,5 @@
+"""Содержит тесты решения первого пункта домашнего задания #04."""
+# pylint: disable=redefined-outer-name
 import pytest
 
 from custom_meta import CustomMeta

@@ -1,3 +1,4 @@
+"""Содержит тесты решения второго пункта домашнего задания #04."""
 from typing import Any
 from unittest import mock
 
@@ -32,6 +33,7 @@ class TestValidator:
             Validator()  # type: ignore
 
     def test_special_set_name(self, mocked_validator_inst: Validator):
+        # pylint: disable-next=protected-access
         assert mocked_validator_inst._private_name == "_" + self.test_name
 
     def test_special_set(self, mocked_validator_inst: Validator, mocker: MockerFixture):

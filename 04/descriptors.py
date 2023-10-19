@@ -9,6 +9,7 @@ class Validator(ABC):
     """Abstract base class for Validator data descriptors."""
 
     def __set_name__(self, owner: type, name: str):
+        # pylint: disable-next=attribute-defined-outside-init
         self._private_name = "_" + name
 
     def __get__(self, obj: object, objtype: type | None = None):

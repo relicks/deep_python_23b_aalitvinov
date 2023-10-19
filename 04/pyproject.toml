@@ -44,7 +44,14 @@ profile = "black"
 known_first_party = ["custom_meta", "descriptors"]
 
 [tool.pylint.master]
-disable = "too-few-public-methods"
+disable = [
+    "too-few-public-methods",
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "unnecessary-dunder-call",
+    "logging-fstring-interpolation",
+    "useless-return"
+]
 
 [tool.pylint.format]
 max-line-length = "88"
