@@ -40,9 +40,11 @@ class CustomMeta(type):
         new_class = super().__new__(mcs, name, (AttrSetter, *bases), new_dct)
         return new_class
 
-    def __init__(cls, name: str, bases: tuple[type, ...], dct: dict[str, Any]) -> None:
+    def __init__(
+        cls, name: str, bases: tuple[type, ...], dct: dict[str, Any], **kwds: Any
+    ) -> None:
         logging.info("meta __init__")
-        super().__init__(name, bases, dct)
+        super().__init__(name, bases, dct, **kwds)
 
     def __call__(cls, *args, **kwargs) -> Any:
         logging.info("meta __call__")
