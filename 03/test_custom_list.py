@@ -7,7 +7,7 @@ import pytest
 
 from custom_list import CustomList, Number
 
-SEED: int | None = None
+SEED: int | None = 999
 
 
 def test__zipper():
@@ -43,52 +43,52 @@ class TestSpecialAdd:  # self + other
     def test_custom_long_custom_short(self):
         left = CustomList([5, 1, 3, 7])
         right = CustomList([1, 2, 7])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([6, 3, 10, 7]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_short_custom_long(self):
         left = CustomList([-4, 11])
         right = CustomList([5, -11, 4, 90, 8])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([1, 0, 4, 90, 8]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_equal_length(self):
         left = CustomList([-77, 6, 16])
         right = CustomList([4, 0, 8])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([-73, 6, 24]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_short_list_long(self):
         left = CustomList([1])
         right = [2, 5]
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([3, 5]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_long_list_short(self):
         left = CustomList([6, -7, -5, 3])
         right = [0, 44, 3]
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([6, 37, -2, 3]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_both_empty(self):
         assert (CustomList() + CustomList()).is_equal(CustomList())
@@ -104,44 +104,44 @@ class TestSpecialAdd:  # self + other
         """Проверяет, что исходные списки остаются неизменными."""
         left = CustomList(xs)
         right = list(ys)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         _ = left + right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
 
 class TestSpecialRadd:  # other + self
     def test_list_long_custom_short(self):
         left = [2, 5]
         right = CustomList([1])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([3, 5]))  # type: ignore
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_list_short_custom_long(self):
         left = [0, 12, -99]
         right = CustomList([-7, 0, 10, 55, 0])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([-7, 12, -89, 55, 0]))  # type: ignore
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_list_custom_equal_length(self):
         left = [0, 0, -1, 4]
         right = CustomList([0, 14, 1, 5])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left + right).is_equal(CustomList([0, 14, 0, 9]))  # type: ignore
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_both_empty(self):
         result: CustomList = [] + CustomList()  # type: ignore
@@ -157,64 +157,64 @@ class TestSpecialRadd:  # other + self
         """Проверяет, что исходные списки остаются неизменными."""
         left = list(xs)
         right = CustomList(ys)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         _ = left + right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
 
 class TestSpecialSub:  # self - other
     def test_custom_long_custom_short(self):
         left = CustomList([5, 1, 3, 7])
         right = CustomList([1, 2, 7])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([4, -1, -4, 7]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_short_custom_long(self):
         left = CustomList([-4, 11])
         right = CustomList([5, -11, 4, 90, 8])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([-9, 22, -4, -90, -8]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_equal_length(self):
         left = CustomList([-77, 6, 16])
         right = CustomList([4, 0, 8])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([-81, 6, 8]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_short_list_long(self):
         left = CustomList([1])
         right = [2, 5]
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([-1, -5]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_custom_long_list_short(self):
         left = CustomList([6, -7, -5, 3])
         right = [0, 44, 3]
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([6, -51, -8, 3]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_both_empty(self):
         assert (CustomList() - CustomList()).is_equal(CustomList())
@@ -231,44 +231,44 @@ class TestSpecialSub:  # self - other
         """Проверяет, что исходные списки остаются неизменными."""
         left = CustomList(xs)
         right = list(ys)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         _ = left - right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
 
 class TestSpecialRsub:  # other - self
     def test_list_long_custom_short(self):
         left = [2, 5]
         right = CustomList([1])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([1, 5]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_list_short_custom_long(self):
         left = [0, 12, -99]
         right = CustomList([-7, 0, 10, 55, 0])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([7, 12, -109, -55, 0]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_list_custom_equal_length(self):
         left = [0, 0, -1, 4]
         right = CustomList([0, 14, 1, 5])
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert (left - right).is_equal(CustomList([0, -14, -2, -1]))
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_both_empty(self):
         result = [] - CustomList()
@@ -285,12 +285,12 @@ class TestSpecialRsub:  # other - self
         """Проверяет, что исходные списки остаются неизменными."""
         left = list(xs)
         right = CustomList(ys)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         _ = left - right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
 
 class TestSpecialEq:
@@ -307,12 +307,12 @@ class TestSpecialEq:
     def test_differing_lengths(self, ls, rs):
         left = CustomList(ls)
         right = CustomList(rs)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert left == right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_empty(self):
         assert CustomList([]) == CustomList([])
@@ -351,12 +351,12 @@ class TestSpecialNe:
     def test_purity(self, xs: list[Number], ys: list[Number]):
         left = CustomList(xs)
         right = CustomList(ys)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         _ = left != right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
 
 class TestSpecialLe:  # self <= other
@@ -371,12 +371,12 @@ class TestSpecialLe:  # self <= other
     )
     def test_fuzzy(self, ls, rs):
         left, right = CustomList(ls), CustomList(rs)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert left <= right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_empty(self):
         assert CustomList([]) <= CustomList([])
@@ -394,12 +394,12 @@ class TestSpecialLt:  # self < other
     )
     def test_fuzzy(self, ls, rs):
         left, right = CustomList(ls), CustomList(rs)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert left < right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_lt_empty(self):
         assert not CustomList([]) < CustomList([])
@@ -418,12 +418,12 @@ class TestSpecialGe:  # self >= other
     )
     def test_fuzzy(self, ls, rs):
         left, right = CustomList(ls), CustomList(rs)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert left >= right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_ge_empty(self):
         assert CustomList([]) >= CustomList([])
@@ -442,12 +442,12 @@ class TestSpecialGt:  # self > other
     )
     def test_fuzzy(self, ls, rs):
         left, right = CustomList(ls), CustomList(rs)
-        hashes_before = (hash(tuple(left)), hash(tuple(right)))
+        lists_before = (list(left), list(right))
 
         assert left > right
 
-        hashes_after = (hash(tuple(left)), hash(tuple(right)))
-        assert hashes_before == hashes_after
+        lists_after = (list(left), list(right))
+        assert lists_before == lists_after
 
     def test_gt_empty(self):
         assert not CustomList([]) > CustomList([])
