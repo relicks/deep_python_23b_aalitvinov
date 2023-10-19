@@ -9,19 +9,19 @@ class Validator(ABC):
     """Abstract base class for Validator data descriptors."""
 
     def __set_name__(self, owner: type, name: str):
-        self.private_name = "_" + name
+        self._private_name = "_" + name
 
     def __get__(self, obj: object, objtype: type | None = None):
-        return getattr(obj, self.private_name)
+        return getattr(obj, self._private_name)
 
     def __set__(self, obj: object, value: Any):
         err = self.validate(value)
         if err is not None:
             raise err
-        setattr(obj, self.private_name, value)
+        setattr(obj, self._private_name, value)
 
     @abstractmethod
-    def validate(self, value: Any) -> Exception | None:
+    def validate(self, value: Any) -> Exception | None:  # pragma: no cover
         pass
 
 
