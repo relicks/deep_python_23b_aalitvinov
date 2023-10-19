@@ -5,15 +5,6 @@ from pytest_mock import MockerFixture
 
 from descriptors import Validator
 
-# @pytest.fixture(scope="class")
-# def mocked_validator_inst() -> Validator:
-#     with mock.patch.multiple(
-#         Validator,
-#         __abstractmethods__=set(),
-#         validate=mock.Mock(return_value=None),
-#     ):
-#         return Validator()  # type: ignore
-
 
 class TestValidator:
     test_name = "test_attr"
@@ -50,6 +41,7 @@ class TestValidator:
     def test_special_set_raises(
         self, mocked_validator_inst: Validator, mocker: MockerFixture
     ):
+        """Проверяет, что возвращаемый `validate` Exception поднимается."""
         mock_obj = mocker.Mock()
         mocker.patch.object(
             mocked_validator_inst, "validate", return_value=ValueError("тест")
@@ -60,6 +52,9 @@ class TestValidator:
     def test_special_set_not_mutates(
         self, mocked_validator_inst: Validator, mocker: MockerFixture
     ):
+        """
+        Проверяет, что setting невалидного значения в дескриптор не меняет его значение.
+        """
         mock_obj = mocker.Mock()
         mocked_validator_inst.__set__(mock_obj, self.test_value)
         initial_value = getattr(mock_obj, "_" + self.test_name)
