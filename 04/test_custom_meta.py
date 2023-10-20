@@ -14,7 +14,6 @@ def custom_class() -> type:
         x = CLASS_VAR
 
         def __init__(self, val=INST_VAR):
-            print("inst init")
             self.val = val
 
         def line(self):

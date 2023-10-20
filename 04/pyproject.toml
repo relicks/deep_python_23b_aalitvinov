@@ -50,7 +50,7 @@ disable = [
     "missing-class-docstring",
     "unnecessary-dunder-call",
     "logging-fstring-interpolation",
-    "useless-return"
+    "useless-return",
 ]
 
 [tool.pylint.format]
@@ -75,8 +75,9 @@ select = [
     "PT",  # flake8-pytest-style
 ]
 ignore = [
-    "RUF001", # ambiguous cyrillic letters
-    "RUF002", # ambiguous cyrillic letters
+    "RUF001",  # ambiguous cyrillic letters
+    "RUF002",  # ambiguous cyrillic letters
+    "PLR2004", # magic-value-comparison
 ]
 
 [tool.ruff.per-file-ignores]
