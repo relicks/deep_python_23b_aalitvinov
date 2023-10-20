@@ -58,16 +58,29 @@ class TestValidator:
         """
         Проверяет, что setting невалидного значения в дескриптор не меняет его значение.
         """
-        mock_obj = mocker.Mock()
+        mock_obj = mocker.Mock()  # имитирует класс, которому привязывается дескриптор
+
+        # установка изначального значения:
         mocked_validator_inst.__set__(mock_obj, self.test_value)
+
+        # проверка, что изначальное значение установилось верно:
         initial_value = getattr(mock_obj, "_" + self.test_name)
         assert initial_value == self.test_value
+
         mocker.patch.object(
             mocked_validator_inst, "validate", return_value=ValueError("тест")
-        )
+        )  # теперь установка любого значения будет неуспешным
+
+        # проверка, что попытка установить неверное значение вызывает ValueError:
         with pytest.raises(ValueError, match="тест"):
             mocked_validator_inst.__set__(mock_obj, "INVALID_VALUE")
-        assert initial_value == getattr(mock_obj, "_" + self.test_name)
+
+        # проверка, что фактическое значение не изменилось:
+        assert (
+            initial_value
+            == getattr(mock_obj, "_" + self.test_name)
+            == mocked_validator_inst.__get__(mock_obj)
+        )
 
     def test_special_get(self, mocked_validator_inst: Validator, mocker: MockerFixture):
         mock_obj = mocker.Mock()
