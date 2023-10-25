@@ -14,10 +14,10 @@
 ```text
 Name             Stmts   Miss Branch BrPart  Cover
 --------------------------------------------------
-custom_meta.py      31      0      4      0   100%
+custom_meta.py      33      0      4      0   100%
 descriptors.py      39      0     14      0   100%
 --------------------------------------------------
-TOTAL               70      0     18      0   100%
+TOTAL               72      0     18      0   100%
 ```
 
 ## Testing

@@ -77,9 +77,9 @@ class TestValidator:
 
         # проверка, что фактическое значение не изменилось:
         assert (
-            initial_value
-            == getattr(mock_obj, "_" + self.test_name)
-            == mocked_validator_inst.__get__(mock_obj)
+            initial_value  # было
+            == getattr(mock_obj, "_" + self.test_name)  # стало, приватный attr
+            == mocked_validator_inst.__get__(mock_obj)  # стало, get дескриптора
         )
 
     def test_special_get(self, mocked_validator_inst: Validator, mocker: MockerFixture):
@@ -94,23 +94,26 @@ class TestValidator:
     def validator_example(self):
         class ExampleValidator(Validator):
             def validate(self, value: Any) -> Exception | None:
-                if value not in (1, "two", "other", "new"):
+                if value not in (1, "two", "other", "new", ["☼"]):
                     raise ValueError("from ExampleValidator")
                 return None
 
         class Example:
             var_one = ExampleValidator()
             var_two = ExampleValidator()
+            var_list = ExampleValidator()
 
             def __init__(self) -> None:
                 self.var_one = 1
                 self.var_two = "two"
+                self.var_list = ["☼"]
 
         return Example()
 
     def test_double_validator(self, validator_example):
         assert validator_example.var_one == 1
         assert validator_example.var_two == "two"
+        assert validator_example.var_list == ["☼"]
 
     def test_double_validator_set(self, validator_example):
         validator_example.var_one = "new"
@@ -118,9 +121,15 @@ class TestValidator:
         assert validator_example.var_one == "new"
         assert validator_example.var_two == "other"
 
-    def test_double_validator_raises(self, validator_example):
+    def test_double_validator_not_mutates(self, validator_example):
         with pytest.raises(ValueError, match="from ExampleValidator"):
             validator_example.var_one = 2
+        assert validator_example.var_one == 1
+
+        with pytest.raises(ValueError, match="from ExampleValidator"):
+            validator_example.var_list = ("invalid_val",)
+
+        assert validator_example.var_list == ["☼"]
 
 
 class TestUInt64Validator:
