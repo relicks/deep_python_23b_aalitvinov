@@ -95,11 +95,6 @@ else:
     namespace.configure(
         {
             "python_bin_path": get_python_bin_path(),
-            "lint_paths": [
-                "custom_meta.py",
-                "descriptors.py",
-                "test_custom_meta.py",
-                "test_descriptors.py",
-            ],
+            "lint_paths": ["lru_cache.py", "test_lru_cache.py"],
         }
     )

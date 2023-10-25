@@ -1,3 +1,4 @@
+"""Содержит решение первого пункта HW05."""
 from collections.abc import Hashable
 from typing import Any
 
@@ -15,17 +16,17 @@ class LRUCache:
             value = self.data[key]  # O(1)
         except KeyError:
             return None
-        else:
-            if key not in self.deck:  # O(1)
-                self.deck[key] = None  # O(1)
-            else:
-                del self.deck[key]  # O(1)
-                self.deck[key] = None  # O(1)
 
-            if len(self.deck) > len(self.data):  # O(1)
-                first_key = next(iter(self.deck))  # O(1)
-                del self.deck[first_key]  # O(1)
-            return value
+        if key not in self.deck:  # O(1)
+            self.deck[key] = None  # O(1)
+        else:
+            del self.deck[key]  # O(1)
+            self.deck[key] = None  # O(1)
+
+        if len(self.deck) > len(self.data):  # O(1)
+            first_key = next(iter(self.deck))  # O(1)
+            del self.deck[first_key]  # O(1)
+        return value
 
     def set(self, key: Hashable, value: Any) -> None:
         self.data[key] = value  # O(1)
@@ -39,5 +40,8 @@ class LRUCache:
             first_key = next(iter(self.deck))  # O(1)
             del self.data[first_key]  # O(1)
 
+    def to_dict(self) -> dict[Hashable, Any]:
+        return {k: self.data[k] for k in self.deck if k in self.data}
+
     def __repr__(self) -> str:
-        return repr({k: self.data[k] for k in self.deck if k in self.data})
+        return repr(self.to_dict())
