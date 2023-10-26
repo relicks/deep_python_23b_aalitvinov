@@ -10,12 +10,11 @@
 ### Coverage report
 
 ```text
-Name             Stmts   Miss Branch BrPart  Cover
---------------------------------------------------
-custom_meta.py      31      0      4      0   100%
-descriptors.py      39      0     14      0   100%
---------------------------------------------------
-TOTAL               70      0     18      0   100%
+Name           Stmts   Miss Branch BrPart  Cover
+------------------------------------------------
+lru_cache.py      42      0     12      0   100%
+------------------------------------------------
+TOTAL             42      0     12      0   100%
 ```
 
 ## Testing
@@ -36,7 +35,7 @@ Then follow these instructions:
 1. _cd_ into this dir:
 
    ```bash
-   cd deep_python_23b_aalitvinov/04
+   cd deep_python_23b_aalitvinov/05
    ```
 
    and run all commands from this working directory.

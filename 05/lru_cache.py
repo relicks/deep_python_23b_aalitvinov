@@ -53,37 +53,44 @@ class LRUCache:
         self._deck: dict[Hashable, None] = {}
         self._limit = limit
 
+    def _update_deck(self, key: Hashable) -> None:
+        if key not in self._deck:  # O(1)
+            self._deck[key] = None  # O(1)
+        else:  # ? move this key to the top, since it is being used
+            del self._deck[key]  # O(1)
+            self._deck[key] = None  # O(1)
+
+        # ? if deck is bigger than cache data -> delete first deck element
+        if len(self._deck) > len(self._data):  # O(1)
+            first_key = next(iter(self._deck))  # O(1)
+            del self._deck[first_key]  # O(1)
+
     def get(self, key: Hashable) -> Any | None:
         try:
             value = self._data[key]  # O(1)
         except KeyError:
             return None
 
-        if key not in self._deck:  # O(1)
-            self._deck[key] = None  # O(1)
-        else:
-            del self._deck[key]  # O(1)
-            self._deck[key] = None  # O(1)
+        self._update_deck(key)
 
-        if len(self._deck) > len(self._data):  # O(1)
-            first_key = next(iter(self._deck))  # O(1)
-            del self._deck[first_key]  # O(1)
         return value
 
     def set(self, key: Hashable, value: Any) -> None:
         self._data[key] = value  # O(1)
-        if key not in self._deck:  # O(1)
-            self._deck[key] = None  # O(1)
-        else:
-            del self._deck[key]  # O(1)
-            self._deck[key] = None  # O(1)
+
+        self._update_deck(key)
 
         if len(self._data) == self._limit + 1:  # O(1)
             first_key = next(iter(self._deck))  # O(1)
             del self._data[first_key]  # O(1)
 
+        self._update_deck(key)
+
     def to_dict(self) -> dict[Hashable, Any]:
         return {k: self._data[k] for k in self._deck if k in self._data}
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         return repr(self.to_dict())
+
+    def __iter__(self):
+        return iter(self.to_dict().items())
