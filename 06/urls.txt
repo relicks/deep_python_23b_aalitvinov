@@ -1,0 +1,10 @@
+https://ru.wikipedia.org/wiki/Python
+https://ru.wikipedia.org/wiki/Python
+https://ru.wikipedia.org/wiki/Python
+https://docs.python.org/3/library/asyncio-eventloop.html
+https://docs.python.org/3/library/asyncio-eventloop.html
+https://docs.python.org/3/library/asyncio-eventloop.html
+https://docs.python.org/3/library/socketserver.html
+https://docs.python.org/3/library/socketserver.html
+https://docs.python.org/3/library/socketserver.html
+https://docs.python.org/3/library/socketserver.html
