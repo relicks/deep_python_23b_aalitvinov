@@ -5,14 +5,13 @@ from collections.abc import Iterable
 import aiohttp
 
 
-async def fetch_url(url: str, que: asyncio.Queue, sem: asyncio.Semaphore):
+async def fetch_url(url: str, que: asyncio.Queue, sem: asyncio.Semaphore) -> bytes:
     async with aiohttp.ClientSession() as session:
         async with sem:
             async with session.get(url) as resp:
-                # print(resp.status, url)
                 body = await resp.read()
                 await que.put((url, resp.status, body))
-                # return resp.status
+                return body
 
 
 async def batch_fetch(
@@ -22,7 +21,7 @@ async def batch_fetch(
         asyncio.create_task(asyncio.wait_for(fetch_url(url, que, sem), timeout=timeout))
         for url in urls
     ]
-    await asyncio.gather(*tasks, return_exceptions=True)
+    return await asyncio.gather(*tasks, return_exceptions=True)
 
 
 async def main():
