@@ -42,7 +42,7 @@ target-version = ["py310"]
 
 [tool.isort]
 profile = "black"
-known_first_party = ["lru_cache"]
+known_first_party = ["server", "client"]
 
 [tool.pylint.master]
 disable = [
@@ -85,7 +85,7 @@ ignore = [
 "test_custom_list.py" = ["RUF005"]
 
 [tool.ruff.isort]
-known-first-party = ["lru_cache"]
+known-first-party = ["server", "client"]
 
 [tool.pytest.ini_options]
 # pythonpath = ["src"]

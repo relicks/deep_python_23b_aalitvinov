@@ -1,25 +1,26 @@
-import asyncio
+import concurrent.futures
 import json
-import threading
+from collections.abc import Iterable, Iterator
+from itertools import islice
+from pprint import pp
+from typing import Any
+from urllib.request import urlopen
+
+ADDR = "http://localhost"
+PORT = "8087"
+SERVER_URL = f"{ADDR}:{PORT}"
+MAX_WORKERS = 10
 
 
-async def tcp_echo_client(message):
-    reader, writer = await asyncio.open_connection("localhost", 8888)
+def batched(iterable: Iterable[Any], chunk_size: int) -> Iterator[tuple[Any, ...]]:
+    iterator = iter(iterable)
+    while chunk := tuple(islice(iterator, chunk_size)):
+        yield chunk
 
-    print(f"Send: {message!r}")
-    writer.write(message.encode())
-    await writer.drain()
 
-    data = await reader.read(1000)
-
-    # print(f"Received: {data.decode()!r}")
-    print("Received:")
-
-    print("Close the connection")
-    writer.close()
-    await writer.wait_closed()
-    print(json.loads(data.decode()))
-    return json.loads(data.decode())
+def getter(addr: str, values: dict[str, Iterable[str]]):
+    resp = urlopen(addr, data=json.dumps(values).encode())
+    return json.loads(resp.read())
 
 
 # for _ in range(10):
@@ -29,5 +30,15 @@ async def tcp_echo_client(message):
 #     )
 #     th.start()
 
-with open("./urls.txt") as fs:
-    urls_list = fs.read().split("\n")
+
+if __name__ == "__main__":
+    with open("./urls.txt") as fs:
+        urls_list = [line.rstrip("\r\n") for line in fs.readlines()]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = [
+            executor.submit(getter, SERVER_URL, {"urls": [url]})
+            for url in urls_list[:5]
+        ]
+        for future in concurrent.futures.as_completed(futures):
+            pp(future.result()["urls"])
