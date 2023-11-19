@@ -23,6 +23,7 @@ N_WORKERS = 6
 
 ADDR = ""
 PORT = 8087
+DEBUG_LOCK = threading.Lock()
 
 InQueue: TypeAlias = Queue[str]
 OutQueue: TypeAlias = Queue[dict[str, dict[str, int]] | dict[str, None]]
@@ -83,7 +84,8 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):  # noqa: N802
         query = self._parse_query()  # ? Parse request
-        ic(query)
+        with DEBUG_LOCK:
+            ic(query)
         if not query:
             # ? Response head
             self.send_error(400, "Cannot parse your query.")
@@ -103,21 +105,21 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
 
             # ? Send reply
             json_str = json.dumps(result)
-            self.wfile.write(json_str.encode(encoding="utf-8"))
+            self.wfile.write(json_str.encode(encoding="utf-8"))  # type: ignore
             # ? END Send reply
 
 
 def worker(prime_queue) -> None:
     while True:
-        name = threading.current_thread().name
+        # name = threading.current_thread().name
         client_in_queue, client_out_queue = prime_queue.get()
 
         url = client_in_queue.get()
-        print(f"{name} Working on {url}", file=sys.stderr)
+        # print(f"{name} Working on {url}", file=sys.stderr)
         top_words = get_top_words(url, N_TOP_WORDS)
         client_out_queue.put(top_words)
         client_in_queue.task_done()
-        print(f"{name} Finished {url}", file=sys.stderr)
+        # print(f"{name} Finished {url}", file=sys.stderr)
 
 
 if __name__ == "__main__":

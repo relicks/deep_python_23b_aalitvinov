@@ -7,7 +7,7 @@ from pathlib import Path
 try:
     from invoke import Collection, task  # type: ignore
     from invoke.context import Context  # type: ignore
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     pass
 else:
 

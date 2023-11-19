@@ -1,44 +1,86 @@
-import concurrent.futures
+import argparse
 import json
+import os
+import sys
 from collections.abc import Iterable, Iterator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import islice
 from pprint import pp
-from typing import Any
+from typing import TypeVar
 from urllib.request import urlopen
+
+DEBUG = bool(os.environ.get("PY_DEBUG"))
 
 ADDR = "http://localhost"
 PORT = "8087"
 SERVER_URL = f"{ADDR}:{PORT}"
-MAX_WORKERS = 10
+DEFAULT_MAX_WORKERS = 10
+BATCH_SIZE = 4
+FILE_PATH = "./urls.txt"
+T = TypeVar("T")
 
 
-def batched(iterable: Iterable[Any], chunk_size: int) -> Iterator[tuple[Any, ...]]:
+class MyArgs(argparse.Namespace):
+    num_workers: int
+    file_path: str
+
+
+def batched(iterable: Iterable[T], chunk_size: int) -> Iterator[tuple[T, ...]]:
+    """Batch data from the iterable into tuples of length n.
+
+    The last batch may be shorter than n.
+    Loops over the input iterable and accumulates data into tuples up to size n.
+    he input is consumed lazily, just enough to fill a batch. The result is
+    yielded as soon as the batch is full or when the input iterable is exhausted.
+
+    SOURCE: https://realpython.com/how-to-split-a-python-list-into-chunks
+    """
     iterator = iter(iterable)
     while chunk := tuple(islice(iterator, chunk_size)):
         yield chunk
 
 
-def getter(addr: str, values: dict[str, Iterable[str]]):
+def args_parser() -> MyArgs:
+    commands = sys.argv[1:] or (["urls.txt"] if DEBUG else None)
+    parser = argparse.ArgumentParser(
+        prog="Клиентский скрипт для асинхронной обкачки урлов с помощью потоков."
+    )
+    parser.add_argument(
+        "-w",
+        "--num-workers",
+        type=int,
+        default=(dv := DEFAULT_MAX_WORKERS),
+        help=f"number of simultaneous connections (default: {dv})",
+    )
+    parser.add_argument("file_path", help="path to file with urls")
+    args: MyArgs = parser.parse_args(commands)  # type: ignore
+    return args
+
+
+def getter(
+    addr: str, values: dict[str, Iterable[str]]
+) -> dict[str, dict[str, int] | None]:
     resp = urlopen(addr, data=json.dumps(values).encode())
     return json.loads(resp.read())
 
 
-# for _ in range(10):
-#     th = threading.Thread(
-#         target=asyncio.run,
-#         args=(tcp_echo_client("https://ru.wikipedia.org/wiki/Python"),),
-#     )
-#     th.start()
+def main() -> None:
+    args = args_parser()
+
+    url_field_name = "urls"
+    with ThreadPoolExecutor(max_workers=args.num_workers) as executor:
+        with open(args.file_path) as fs:
+            futures = tuple(
+                executor.submit(
+                    getter,
+                    SERVER_URL,
+                    {url_field_name: [url.rstrip("\n") for url in batch]},
+                )
+                for batch in batched(fs, BATCH_SIZE)
+            )
+        for future in as_completed(futures):
+            pp(future.result()[url_field_name])
 
 
 if __name__ == "__main__":
-    with open("./urls.txt") as fs:
-        urls_list = [line.rstrip("\r\n") for line in fs.readlines()]
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = [
-            executor.submit(getter, SERVER_URL, {"urls": [url]})
-            for url in urls_list[:5]
-        ]
-        for future in concurrent.futures.as_completed(futures):
-            pp(future.result()["urls"])
+    main()
