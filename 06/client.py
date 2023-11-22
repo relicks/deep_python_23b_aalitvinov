@@ -2,12 +2,19 @@ import argparse
 import json
 import os
 import sys
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import islice
 from pprint import pp
 from typing import TypeVar
 from urllib.request import urlopen
+
+try:
+    from icecream import ic
+except ImportError:  # Graceful fallback if IceCream isn't installed.
+    ic = lambda *a: None if not a else (a[0] if len(a) == 1 else a)  # noqa
+else:
+    ic.configureOutput(includeContext=True)
 
 DEBUG = bool(os.environ.get("PY_DEBUG"))
 
@@ -42,6 +49,7 @@ def batched(iterable: Iterable[T], chunk_size: int) -> Iterator[tuple[T, ...]]:
 
 def args_parser() -> MyArgs:
     commands = sys.argv[1:] or (["urls.txt"] if DEBUG else None)
+    ic(commands)
     parser = argparse.ArgumentParser(
         prog="Клиентский скрипт для асинхронной обкачки урлов с помощью потоков."
     )
@@ -58,7 +66,7 @@ def args_parser() -> MyArgs:
 
 
 def getter(
-    addr: str, values: dict[str, Iterable[str]]
+    addr: str, values: Mapping[str, Iterable[str]]
 ) -> dict[str, dict[str, int] | None]:
     resp = urlopen(addr, data=json.dumps(values).encode())
     return json.loads(resp.read())
@@ -66,6 +74,7 @@ def getter(
 
 def main() -> None:
     args = args_parser()
+    ic(args)
 
     url_field_name = "urls"
     with ThreadPoolExecutor(max_workers=args.num_workers) as executor:
