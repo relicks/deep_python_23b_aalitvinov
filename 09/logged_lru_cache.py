@@ -4,39 +4,39 @@ import logging
 from collections.abc import Hashable
 from typing import Any
 
-logger = logging.getLogger(__name__)
+modlogger = logging.getLogger(__name__)
 
 
 class LRUCache:
     def __init__(self, limit: int = 42) -> None:
-        logger.info("Initialized LRUCache instance with limit %d", limit)
+        modlogger.info("Initialized LRUCache instance with limit %d", limit)
         self._data: dict[Hashable, Any] = {}
         self._limit = limit
 
     def _emerge(self, key: Hashable) -> None:
         """Moves KV pair to the top of the data-dictionary."""
-        logger.info("Moved key `%s` to the top", key)
+        modlogger.info("Moved key `%s` to the top", key)
         value = self._data[key]
         del self._data[key]
         self._data[key] = value
-        logger.debug("Value moved was `%s`", value)
+        modlogger.debug("Value moved was `%s`", value)
 
     def get(self, key: Hashable) -> Any | None:
         try:
             value = self._data[key]
         except KeyError:
-            logger.error("Key `%s` does not exist in the LRUCache", key)
+            modlogger.error("Key `%s` does not exist in the LRUCache", key)
             return None
         else:
-            logger.info("Key `%s` exists in the LRUCache", key)
+            modlogger.info("Key `%s` exists in the LRUCache", key)
             self._emerge(key)
             return value
 
     def set(self, key: Hashable, value: Any) -> None:
         if key in self._data:
-            logger.info("Setting existing key `%s` with value `%s`", key, value)
+            modlogger.info("Setting existing key `%s` with value `%s`", key, value)
         else:
-            logger.info(
+            modlogger.info(
                 "Key `%s` not found in the LRUCache, setting it with value `%s`",
                 key,
                 value,
@@ -45,14 +45,14 @@ class LRUCache:
         self._data[key] = value
         self._emerge(key)
         if self._limit and len(self._data) >= self._limit + 1:
-            logger.warning("LRUCache limit is reached, deleting bottom KV pair")
+            modlogger.warning("LRUCache limit is reached, deleting bottom KV pair")
             first_key = next(iter(self._data))
-            logger.debug("KV pair to be deleted -> `%s: %s`", key, value)
+            modlogger.debug("KV pair to be deleted -> `%s: %s`", key, value)
             del self._data[first_key]
         self._emerge(key)
 
     def _explode(self):
-        logger.critical("💥💥💥! That shouldn't ever have been called. ☠️⚰️")
+        modlogger.critical("💥💥💥! That shouldn't ever have been called. ☠️⚰️")
         raise NotImplementedError
 
     def __repr__(self) -> str:  # pragma: no cover
@@ -62,17 +62,17 @@ class LRUCache:
         return iter(self._data.items())
 
 
-class ExtraFilter(logging.Filter):
+class _ExtraFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         return record.args is not None and len(record.args) > 1
 
 
-class MyArgs(argparse.Namespace):
+class _MyArgs(argparse.Namespace):
     print_stdout: bool
     enable_filter: bool
 
 
-def _args_parser() -> MyArgs:
+def _args_parser() -> _MyArgs:
     parser = argparse.ArgumentParser(prog="LRU-cache с логированием.")
     parser.add_argument(
         "-s",
@@ -86,12 +86,11 @@ def _args_parser() -> MyArgs:
         action="store_true",
         help="включает фильтр логгера",
     )
-    args: MyArgs = parser.parse_args()  # type: ignore
+    args: _MyArgs = parser.parse_args()  # type: ignore
     return args
 
 
-if __name__ == "__main__":
-    cfg = _args_parser()
+def _configure_logger(logger: logging.Logger, cfg: _MyArgs):
     logger.setLevel(logging.DEBUG)
 
     file_handler_formatter = logging.Formatter(
@@ -118,8 +117,10 @@ if __name__ == "__main__":
         logger.addHandler(stream_handler)
 
     if cfg.enable_filter:
-        logger.addFilter(ExtraFilter())
+        logger.addFilter(_ExtraFilter())
 
+
+def _test_lru_cache():
     cache = LRUCache(3)
 
     cache.set("k1", "val1")
@@ -139,3 +140,12 @@ if __name__ == "__main__":
         cache._explode()
     except Exception:
         pass
+
+
+def _main():
+    _configure_logger(logger=modlogger, cfg=_args_parser())
+    _test_lru_cache()
+
+
+if __name__ == "__main__":
+    _main()
