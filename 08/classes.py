@@ -4,8 +4,6 @@ import weakref
 from random import Random
 from typing import Any
 
-from memory_profiler import profile
-
 SEED = 999
 rng = Random(SEED)
 
@@ -30,7 +28,6 @@ class Weak:
         self.second = weakref.ref(second)
 
 
-@profile
 def invoker(cls: type) -> Any:
     return cls({rng.random()}, {rng.random()})
 
