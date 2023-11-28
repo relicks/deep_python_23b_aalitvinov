@@ -1,7 +1,8 @@
 """Содержит второй пункт (тесты решения первого пункта) HW05."""
 import pytest
 
-from lru_cache import LRUCache, NaturalIntValidator
+from lru_cache import AnotherLRUCache as LRUCache
+from lru_cache import NaturalIntValidator
 
 
 class TestNaturalIntValidator:

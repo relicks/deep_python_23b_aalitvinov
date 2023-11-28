@@ -94,3 +94,36 @@ class LRUCache:
 
     def __iter__(self):
         return iter(self.to_dict().items())
+
+
+class AnotherLRUCache:
+    def __init__(self, limit: int = 42) -> None:
+        self._data: dict[Hashable, Any] = {}
+        self._limit = limit
+
+    def _emerge(self, key: Hashable) -> None:
+        value = self._data[key]
+        del self._data[key]
+        self._data[key] = value
+
+    def get(self, key: Hashable) -> Any | None:
+        try:
+            value = self._data[key]
+        except KeyError:
+            return None
+        self._emerge(key)
+        return value
+
+    def set(self, key: Hashable, value: Any) -> None:
+        self._data[key] = value
+        self._emerge(key)
+        if self._limit and len(self._data) >= self._limit + 1:
+            first_key = next(iter(self._data))
+            del self._data[first_key]
+        self._emerge(key)
+
+    def __repr__(self) -> str:  # pragma: no cover
+        return repr(self._data)
+
+    def __iter__(self):
+        return iter(self._data.items())
