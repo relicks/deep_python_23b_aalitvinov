@@ -107,6 +107,7 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
         logger.info(f"Connection from {self.client_address}")
 
         query = self._parse_request_query()  # ? Parse request
+        print(query)
         if not query:
             # ? Response head
             self.send_error(400, "Cannot parse your query.")
