@@ -37,10 +37,12 @@ PORT = 8087
 DEBUG_LOCK = threading.Lock()
 
 logger = logging.getLogger(__name__)
+global_url_counter = 0
 
 
+WordCounts: TypeAlias = dict[str, int]
 InQueue: TypeAlias = Queue[str]
-OutQueue: TypeAlias = Queue[dict[str, dict[str, int]] | dict[str, None]]
+OutQueue: TypeAlias = Queue[dict[str, WordCounts] | dict[str, None]]
 PrimeQueue: TypeAlias = Queue[tuple[InQueue, OutQueue]]
 
 JsonTypes: TypeAlias = str | int | float | bool | None
@@ -57,7 +59,7 @@ class HTMLDataParser(HTMLParser, ABC):
         pass
 
 
-class WordParser(HTMLDataParser, HTMLParser):
+class WordParser(HTMLDataParser):
     def __init__(self):
         super().__init__()
         self._text: list[str] = []
@@ -97,7 +99,7 @@ def get_url_vocab(url: str) -> list[str] | None:
         return None
 
 
-def get_top_words(url: str, n_top: int) -> dict[str, dict[str, int]] | dict[str, None]:
+def get_top_words(url: str, n_top: int) -> dict[str, WordCounts] | dict[str, None]:
     words = get_url_vocab(url)
     if words:
         count = Counter(words)
@@ -123,8 +125,8 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
         self,
         query: dict[str, Any],
         url_field_name: str,
-    ) -> dict[str, dict[str, int] | None]:
-        out_dict = {}
+    ) -> dict[str, WordCounts | None]:
+        out_dict: WordCounts = {}
         client_in_queue: InQueue = Queue()
         client_out_queue: OutQueue = Queue()
 
@@ -167,11 +169,8 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
             # ? END Send reply
 
 
-_global_url_counter = 0
-
-
 def _worker(main_queue: PrimeQueue, num_top_words: int) -> None:
-    global _global_url_counter  # noqa: PLW0603
+    global global_url_counter  # noqa: PLW0603
     while True:
         name = threading.current_thread().name
         client_in_queue, client_out_queue = main_queue.get()
@@ -184,8 +183,8 @@ def _worker(main_queue: PrimeQueue, num_top_words: int) -> None:
         client_in_queue.task_done()
         logger.debug("%s Finished %s", name, url)
 
-        _global_url_counter += 1
-        print("Urls parsed: ", _global_url_counter)
+        global_url_counter += 1
+        print("Urls parsed: ", global_url_counter)
 
 
 def _spawn_workers(
@@ -281,7 +280,7 @@ def _configure_logger(
         logger.addHandler(stream_handler)
 
 
-def _main() -> None:
+def main() -> None:
     _configure_logger(logger, print_stdout=True)
 
     handler = CustomRequestHandler
@@ -297,4 +296,4 @@ def _main() -> None:
 
 
 if __name__ == "__main__":
-    _main()
+    main()
