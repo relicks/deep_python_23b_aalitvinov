@@ -2,10 +2,13 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
 import threading
+from abc import ABC, abstractmethod
 from collections import Counter, OrderedDict
 from collections.abc import Sequence
+from html.parser import HTMLParser
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from queue import Queue
@@ -21,7 +24,6 @@ except ImportError:  # Graceful fallback if IceCream isn't installed.
 else:
     ic.configureOutput(includeContext=True)
 
-from html_parser import parse_html
 
 LOG_LEVEL = os.environ.get("LOGLEVEL", logging.NOTSET)
 
@@ -35,11 +37,7 @@ PORT = 8087
 DEBUG_LOCK = threading.Lock()
 
 logger = logging.getLogger(__name__)
-if LOG_LEVEL:
-    logger.setLevel(LOG_LEVEL)
-    ch = logging.StreamHandler()
-    ch.setLevel(LOG_LEVEL)
-    logger.addHandler(ch)
+
 
 InQueue: TypeAlias = Queue[str]
 OutQueue: TypeAlias = Queue[dict[str, dict[str, int]] | dict[str, None]]
@@ -48,10 +46,48 @@ PrimeQueue: TypeAlias = Queue[tuple[InQueue, OutQueue]]
 JsonTypes: TypeAlias = str | int | float | bool | None
 
 
+class HTMLDataParser(HTMLParser, ABC):
+    @abstractmethod
+    def handle_data(self, data: str) -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def parsed_data(self) -> list[str]:
+        pass
+
+
+class WordParser(HTMLDataParser, HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self._text: list[str] = []
+
+    def handle_data(self, data):
+        start_tag = self.get_starttag_text()
+        alpha_string = re.sub(r"[^A-Za-z0-9 ]+", "", data).lower()
+        parsed_data = [word.lower() for word in alpha_string.split()]
+        if (
+            start_tag is not None
+            and parsed_data
+            and not any(substr in start_tag for substr in ("script", "style"))
+        ):
+            self._text.extend(parsed_data)
+
+    @property
+    def parsed_data(self) -> list[str]:
+        return self._text
+
+
+def parse_html(body: str) -> list[str]:
+    parser = WordParser()
+    parser.feed(body)
+    return parser.parsed_data
+
+
 def get_url_vocab(url: str) -> list[str] | None:
     try:
         resp = urlopen(url, timeout=RESPONSE_TIMEOUT)
-    except URLError:
+    except (URLError, ValueError):
         return None
     else:
         if resp.code == HTTPStatus.OK:
@@ -92,19 +128,19 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
         client_in_queue: InQueue = Queue()
         client_out_queue: OutQueue = Queue()
 
-        # ? Putting elements in Consumer queue
+        # ? Putting elements in request's Consumer queue
         for url in query.get(url_field_name, ()):
             client_in_queue.put(url)
             type(self).mainline_queue.put((client_in_queue, client_out_queue))
         client_in_queue.join()  # Waiting for url proccessing by workers
 
-        # ? Getting elements from Producer queue
+        # ? Getting elements from request's Producer queue
         for url_result in client_out_queue.queue:
             out_dict.update(url_result)
         return {url_field_name: out_dict}
 
     def do_POST(self):  # noqa: N802
-        logger.info(f"Connection from {self.client_address}")
+        logger.info("Connection from %s", self.client_address)
 
         query = self._parse_request_query()  # ? Parse request
         print(query)
@@ -141,12 +177,12 @@ def _worker(main_queue: PrimeQueue, num_top_words: int) -> None:
         client_in_queue, client_out_queue = main_queue.get()
 
         url = client_in_queue.get()
-        logger.debug(f"{name} Working on {url}")
+        logger.debug("%s Working on %s", name, url)
 
         top_words = get_top_words(url, num_top_words)
         client_out_queue.put(top_words)
         client_in_queue.task_done()
-        logger.debug(f"{name} Finished {url}")
+        logger.debug("%s Finished %s", name, url)
 
         _global_url_counter += 1
         print("Urls parsed: ", _global_url_counter)
@@ -166,7 +202,7 @@ def _spawn_workers(
     ]
     for thread in workers:
         thread.start()
-    logger.info(f"Started {num_workers} workers.")
+    logger.info("Started %s workers", num_workers)
     return workers
 
 
@@ -193,7 +229,7 @@ class _MyArgs(argparse.Namespace):
 
 def _args_parser(default_commands: Sequence[str] | None = None) -> _MyArgs:
     commands = sys.argv[1:] or default_commands
-    logger.debug(f"Passed commands to _args_parser: {commands}")
+    logger.debug("Passed commands to _args_parser: %s", commands)
     parser = argparse.ArgumentParser(
         prog="Серверный скрипт для асинхронной обкачки урлов с помощью потоков."
     )
@@ -215,10 +251,42 @@ def _args_parser(default_commands: Sequence[str] | None = None) -> _MyArgs:
     return args
 
 
+def _configure_logger(
+    logger: logging.Logger,
+    logger_level: int = logging.DEBUG,
+    log_file_path: str = "./server.log",
+    print_stdout: bool = False,
+):
+    logger.setLevel(logger_level)
+
+    file_handler_formatter = logging.Formatter(
+        "({asctime}) [{levelname}] in: {filename} |> {message}",
+        style="{",
+    )
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setFormatter(file_handler_formatter)
+    file_handler.setLevel(logging.INFO)
+
+    logger.addHandler(file_handler)
+
+    if print_stdout:
+        stream_handler = logging.StreamHandler()
+        stream_handler_formatter = logging.Formatter(
+            "({asctime}) [{levelname}] in: {filename}, lineno:{lineno} |> {message}",
+            style="{",
+            datefmt="%I:%M:%S",
+        )
+        stream_handler.setFormatter(stream_handler_formatter)
+        stream_handler.setLevel(logging.DEBUG)
+        logger.addHandler(stream_handler)
+
+
 def _main() -> None:
+    _configure_logger(logger, print_stdout=True)
+
     handler = CustomRequestHandler
     cfg = _args_parser()
-    logger.info(f"Parsed args: {cfg}")
+    logger.debug("Parsed args: %s", cfg)
     try:
         _serve(handler, handler.mainline_queue, cfg.num_workers, cfg.num_top_words)
     except KeyboardInterrupt:
