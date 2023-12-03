@@ -103,7 +103,7 @@ def get_top_words(url: str, n_top: int) -> dict[str, WordCounts] | dict[str, Non
     words = get_url_vocab(url)
     if words:
         count = Counter(words)
-        return {url: OrderedDict(count.most_common()[:n_top])}
+        return {url: OrderedDict(count.most_common()[: min(n_top, len(count))])}
     return {url: None}
 
 
