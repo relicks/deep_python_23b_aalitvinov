@@ -15,6 +15,17 @@ files = [
 pycares = ">=4.0.0"
 
 [[package]]
+name = "aiofiles"
+version = "23.2.1"
+description = "File support for asyncio."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "aiofiles-23.2.1-py3-none-any.whl", hash = "sha256:19297512c647d4b27a2cf7c34caa7e405c0d60b5560618a29a9fe027b18b0107"},
+    {file = "aiofiles-23.2.1.tar.gz", hash = "sha256:84ec2218d8419404abcb9f0c02df3f34c6e0a68ed41072acfb1cef5cbc29051a"},
+]
+
+[[package]]
 name = "aiohttp"
 version = "3.9.1"
 description = "Async http client/server framework (asyncio)"
@@ -1991,4 +2002,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "161e73de538adc5d304a11e1e60cf26d4979e26df02b04f2d8f9ee3ab05ffb37"
+content-hash = "5841b5eae5627b7cca88b462888700bfab237eab53734bc22e044a51ff04ac5e"

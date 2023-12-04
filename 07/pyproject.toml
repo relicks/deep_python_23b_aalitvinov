@@ -9,6 +9,7 @@ packages = [{ include = "fetcher.py" }]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 aiohttp = {extras = ["speedups"], version = "^3.9.1"}
+aiofiles = "^23.2.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
