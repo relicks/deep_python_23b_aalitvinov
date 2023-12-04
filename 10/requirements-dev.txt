@@ -1,0 +1,6 @@
+wheel
+ujson
+pytest
+ipykernel
+pre-commit
+pylint
