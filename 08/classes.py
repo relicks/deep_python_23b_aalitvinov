@@ -1,8 +1,11 @@
+import cProfile
 import statistics
 import timeit
 import weakref
+from collections.abc import Callable
+from functools import wraps
 from random import Random
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 
 SEED = 999
 rng = Random(SEED)
@@ -56,3 +59,21 @@ def bench(func, n_runs=5, n_loops=1_000_000):
         + f"\nbest time \033[1m\033[32m{infimum}\033[39m ns"
     )
     return {"mean": mean, "stdev": std, "min": infimum}
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def profile_deco(func: Callable[P, R]) -> Callable[P, R]:
+    pr = cProfile.Profile()
+
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        pr.enable()
+        result = func(*args, **kwargs)
+        pr.disable()
+        return result
+
+    wrapper.print_stat = lambda: pr.print_stats()  # type: ignore
+    return wrapper
