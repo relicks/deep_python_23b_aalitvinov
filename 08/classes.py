@@ -8,6 +8,10 @@ from random import Random
 from typing import Any, ParamSpec, TypeVar
 
 SEED = 999
+N_RUNS = 10
+N_LOOPS = 100_000
+SET_LEN = 100
+
 rng = Random(SEED)
 
 
@@ -32,7 +36,9 @@ class Weak:
 
 
 def invoker(cls: type) -> Any:
-    return cls({rng.random()}, {rng.random()})
+    return cls(
+        {rng.random() for _ in range(SET_LEN)}, {rng.random() for _ in range(SET_LEN)}
+    )
 
 
 def attr_reader(cls: type) -> None:
@@ -77,3 +83,9 @@ def profile_deco(func: Callable[P, R]) -> Callable[P, R]:
 
     wrapper.print_stat = lambda: pr.print_stats()  # type: ignore
     return wrapper
+
+
+if __name__ == "__main__":
+    bench(lambda: invoker(Regular), n_runs=N_RUNS, n_loops=N_LOOPS)
+    bench(lambda: invoker(Slotted), n_runs=N_RUNS, n_loops=N_LOOPS)
+    bench(lambda: invoker(Weak), n_runs=N_RUNS, n_loops=N_LOOPS)
