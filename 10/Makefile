@@ -1,11 +1,11 @@
-.PHONY: all venv install test clean
+.PHONY: all venv install test clean bench
 
 PYTHON := $(shell echo $$PY)
 PYTHON ?= python3
 VENVPATH := .venv/bin/
 CLEAN_DIRS := .pytest_cache build *.egg-info dist __pycache__
 
-all: venv install test
+all: venv install test bench
 
 venv:
 	$(PYTHON) -m venv .venv
@@ -16,6 +16,9 @@ install:
 
 test: install
 	$(VENVPATH)pytest tests
+
+bench:
+	$(VENVPATH)python perf_measure.py
 
 clean:
 	rm -rf $(CLEAN_DIRS)
