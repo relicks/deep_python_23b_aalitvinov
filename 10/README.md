@@ -1,6 +1,16 @@
 # Домашнее задание #11 (Расширения на C)
 
+## How to run?
+
+```sh
+export PY=path/to/your/dev-python
+make
+make test
+```
+
 ## Performance measurements results
+
+To run performance measurements: `make bench` after running `make`
 
 ```text
 Testing 'loads' method...
