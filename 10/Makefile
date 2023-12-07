@@ -1,5 +1,6 @@
 .PHONY: all venv install test clean
 
+PYTHON := $(shell echo $$PY)
 PYTHON ?= python3
 VENVPATH := .venv/bin/
 CLEAN_DIRS := .pytest_cache build *.egg-info dist __pycache__
@@ -13,7 +14,7 @@ venv:
 install:
 	$(VENVPATH)python setup.py install
 
-test:
+test: install
 	$(VENVPATH)pytest tests
 
 clean:

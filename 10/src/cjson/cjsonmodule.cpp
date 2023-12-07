@@ -1,8 +1,8 @@
 #include <Python.h>
 
+#include <algorithm>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <algorithm>
 
 using json = nlohmann::json;
 
@@ -29,49 +29,51 @@ PyObject* cjson_loads(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s", &json_str)) {
         return NULL;
     }
+    if (!json::accept(json_str)) {
+        PyErr_SetString(PyExc_ValueError, "String must conform to JSON format");
+        return NULL;
+    } else {
+        json j = json::parse(json_str);
 
-    json j = json::parse(json_str);
+        // Convert the JSON object to a Python dictionary
+        PyObject* dict = PyDict_New();
+        for (auto& element : j.items()) {
+            PyObject* value;
+            if (element.value().is_number_integer()) {  //? int
+                value = PyLong_FromLong(element.value().get<long>());
+            } else if (element.value().is_number_float()) {  //? float
+                value = PyFloat_FromDouble(element.value().get<double>());
+            } else if (element.value().is_boolean()) {  //? bool
+                value = PyBool_FromLong(element.value().get<bool>());
+            } else if (element.value().is_string()) {  //? str
+                value = PyUnicode_FromString(
+                    element.value().get<std::string>().c_str()
+                );
+            } else if (element.value().is_array()) {  //? list
+                value = PyList_New(element.value().size());
+                for (size_t i = 0; i < element.value().size(); i++) {
+                    PyList_SetItem(
+                        value,
+                        i,
+                        PyUnicode_FromString(element.value()[i].dump().c_str())
+                    );
+                }
+            } else if (element.value().is_object()) {  //? dict
+                PyErr_SetString(
+                    PyExc_NotImplementedError,
+                    "Parsing of JSON objects is not yet implemented"
+                );
+                return NULL;
 
-    // Convert the JSON object to a Python dictionary
-    PyObject* dict = PyDict_New();
-    for (auto& element : j.items()) {
-        PyObject* value;
-        if (element.value().is_number_integer()) {
-            value = PyLong_FromLong(element.value().get<long>());
-        } else if (element.value().is_number_float()) {
-            value = PyFloat_FromDouble(element.value().get<double>());
-        } else if (element.value().is_boolean()) {
-            value = PyBool_FromLong(element.value().get<bool>());
-        } else if (element.value().is_string()) {
-            value =
-                PyUnicode_FromString(element.value().get<std::string>().c_str()
-                );
-        } else if (element.value().is_array()) {
-            value = PyList_New(element.value().size());
-            for (size_t i = 0; i < element.value().size(); i++) {
-                PyList_SetItem(
-                    value,
-                    i,
-                    PyUnicode_FromString(element.value()[i].dump().c_str())
-                );
+            } else {
+                value = Py_None;
             }
-        } else if (element.value().is_object()) {
-            value = PyDict_New();
-            for (auto& sub_element : element.value().items()) {
-                PyDict_SetItemString(
-                    value,
-                    sub_element.key().c_str(),
-                    PyUnicode_FromString(sub_element.value().dump().c_str())
-                );
-            }
-        } else {
-            value = Py_None;
+
+            PyDict_SetItemString(dict, element.key().c_str(), value);
         }
 
-        PyDict_SetItemString(dict, element.key().c_str(), value);
+        return dict;
     }
-
-    return dict;
 }
 
 PyObject* cjson_dumps(PyObject* self, PyObject* args) {
@@ -105,29 +107,21 @@ PyObject* cjson_dumps(PyObject* self, PyObject* args) {
                     j[PyUnicode_AsUTF8(key)].push_back(PyObject_IsTrue(item));
                 } else if (PyUnicode_Check(item)) {
                     j[PyUnicode_AsUTF8(key)].push_back(PyUnicode_AsUTF8(item));
+                } else if (PyDict_Check(value)) {
+                    PyErr_SetString(
+                        PyExc_NotImplementedError,
+                        "Serialization of nested Python dicts is not implemented yet"
+                    );
+                    return NULL;
                 }
             }
+        } else if (PyDict_Check(value)) {
+            PyErr_SetString(
+                PyExc_NotImplementedError,
+                "Serialization of nested Python dicts is not implemented yet"
+            );
+            return NULL;
         }
-        // } else if (PyDict_Check(value)) {
-        //     j[PyUnicode_AsUTF8(key)] = json::object();
-        //     PyObject *k, *v;
-        //     Py_ssize_t p = 0;
-        //     while (PyDict_Next(value, &p, &k, &v)) {
-        //         if (PyLong_Check(v)) {
-        //             j[PyUnicode_AsUTF8(key)][PyUnicode_AsUTF8(k)] =
-        //                 PyLong_AsLong(v);
-        //         } else if (PyFloat_Check(v)) {
-        //             j[PyUnicode_AsUTF8(key)][PyUnicode_AsUTF8(k)] =
-        //                 PyFloat_AsDouble(v);
-        //         } else if (PyBool_Check(v)) {
-        //             j[PyUnicode_AsUTF8(key)][PyUnicode_AsUTF8(k)] =
-        //                 PyObject_IsTrue(v);
-        //         } else if (PyUnicode_Check(v)) {
-        //             j[PyUnicode_AsUTF8(key)][PyUnicode_AsUTF8(k)] =
-        //                 PyUnicode_AsUTF8(v);
-        //         }
-        //     }
-        // }
     }
 
     // Convert the JSON object to a string
