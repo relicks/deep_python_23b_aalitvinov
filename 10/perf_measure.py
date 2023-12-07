@@ -6,16 +6,17 @@ import cjson
 import ujson
 
 
-def bench(func, n_runs=30, n_loops=1_000):
+def bench(func, n_runs=5, n_loops=10):
     race = timeit.repeat(func, repeat=n_runs, number=n_loops)
     race = [run / n_loops for run in race]
-    infimum = round(min(race) * 10**9)
-    mean = round(st.mean(race) * 10**9)
-    std = round(st.stdev(race) * 10**9, 1)
+    mag_order = 3
+    infimum = round(min(race) * 10**mag_order)
+    mean = round(st.mean(race) * 10**mag_order)
+    std = round(st.stdev(race) * 10**mag_order, 1)
     print(
-        f"\033[1m{mean} ns ± {std} ns\033[0m per loop"
+        f"\033[1m{mean} ms ± {std} ms\033[0m per loop"
         + f" (mean ± std. dev. of {n_runs} runs, {n_loops} loops each)"
-        + f"\nbest time \033[1m\033[32m{infimum}\033[39m ns\033[0m"
+        + f"\nbest time \033[1m\033[32m{infimum}\033[39m ms\033[0m"
     )
     return {"mean": mean, "stdev": std, "min": infimum}
 
@@ -57,7 +58,7 @@ def testing_dumps(pydict: dict):
 
 
 def main():
-    with open("./data/sample.json") as fd:
+    with open("./data/generated.json") as fd:
         json_str = fd.read()
 
     testing_loads(json_str)

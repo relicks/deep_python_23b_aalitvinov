@@ -6,23 +6,6 @@
 
 using json = nlohmann::json;
 
-PyObject* cjson_sum(PyObject* self, PyObject* args) {
-    PyObject* list_obj;
-    // long int elem_count;
-    if (!PyArg_ParseTuple(args, "O", &list_obj)) {
-        printf("Failed to parse arguments");
-        return NULL;
-    }
-
-    long int list_len = PyList_Size(list_obj);
-    int res = 0;
-    for (int i = 0; i < list_len && i < list_len; ++i) {
-        PyObject* tmp = PyList_GetItem(list_obj, i);
-        int elem = PyLong_AsLong(tmp);
-        res += elem;
-    }
-    return Py_BuildValue("i", res);
-}
 
 PyObject* cjson_loads(PyObject* self, PyObject* args) {
     char* json_str;
@@ -132,7 +115,6 @@ PyObject* cjson_dumps(PyObject* self, PyObject* args) {
 }
 
 static PyMethodDef methods[] = {
-    {"sum", cjson_sum, METH_VARARGS, "sum of first n elements of our array"},
     {"loads",
      cjson_loads,
      METH_VARARGS,
