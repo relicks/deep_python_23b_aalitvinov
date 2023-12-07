@@ -1,3 +1,4 @@
+#! .venv/bin/python
 import json
 import statistics as st
 import timeit
