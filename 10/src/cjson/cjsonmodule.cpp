@@ -7,7 +7,7 @@
 using json = nlohmann::json;
 
 
-PyObject* cjson_loads(PyObject* self, PyObject* args) {
+auto cjson_loads(PyObject* self, PyObject* args) -> PyObject* {
     char* json_str;
     if (!PyArg_ParseTuple(args, "s", &json_str)) {
         return NULL;
@@ -59,7 +59,7 @@ PyObject* cjson_loads(PyObject* self, PyObject* args) {
     }
 }
 
-PyObject* cjson_dumps(PyObject* self, PyObject* args) {
+auto cjson_dumps(PyObject* self, PyObject* args) -> PyObject* {
     PyObject* dict;
     if (!PyArg_ParseTuple(args, "O", &dict)) {
         return NULL;
