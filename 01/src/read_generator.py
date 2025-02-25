@@ -1,13 +1,12 @@
 """Содержит решение к ДЗ#01.1."""
+
 from collections.abc import Iterable, Iterator
 from io import TextIOBase
 from os import PathLike
-from typing import TypeAlias, get_type_hints
-
-TextFile: TypeAlias = TextIOBase
+from typing import get_type_hints
 
 
-def grepiter(iterable: Iterable[str], wordfilter: list[str]) -> Iterator[str]:
+def grepiter(iterable: Iterable[str], wordfilter: Iterable[str]) -> Iterator[str]:
     """Итеративно ищет список слов в каждом элементе `iterable`.
 
     Перебирает строки в итераторе и возвращает только
@@ -20,7 +19,9 @@ def grepiter(iterable: Iterable[str], wordfilter: list[str]) -> Iterator[str]:
 
 
 def grepfile(
-    file: str | PathLike[str] | TextFile, wordfilter: list[str], encoding: str = "utf-8"
+    file: str | PathLike[str] | TextIOBase,
+    wordfilter: Iterable[str],
+    encoding: str = "utf-8",
 ) -> Iterator[str]:
     """Итеративно ищет список слов в каждой строке `file`'а.
 
